@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 旅人探索札記 - AI 智慧導覽</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+</head>
+<body>
+    <!-- 新增：骨架載入畫面 -->
+    <div id="loading-skeleton">
+        <div class="skeleton-header">
+            <div class="skeleton-title skeleton"></div>
+            <div class="skeleton-subtitle skeleton"></div>
+        </div>
+        <div class="skeleton-panel">
+            <div class="skeleton-line skeleton"></div>
+            <div class="skeleton-line skeleton"></div>
+        </div>
+        <div class="skeleton-panel">
+             <div class="skeleton-tabs">
+                <div class="skeleton-tab skeleton"></div>
+                <div class="skeleton-tab skeleton"></div>
+            </div>
+            <div class="skeleton-cards">
+                <div class="skeleton-card"><div class="skeleton-card-icon skeleton"></div><div class="skeleton-card-text"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton"></div></div></div>
+                <div class="skeleton-card"><div class="skeleton-card-icon skeleton"></div><div class="skeleton-card-text"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton"></div></div></div>
+                <div class="skeleton-card"><div class="skeleton-card-icon skeleton"></div><div class="skeleton-card-text"><div class="skeleton-line skeleton"></div><div class="skeleton-line skeleton"></div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container hidden">
+        <header class="header fade-in">
+            <h1>旅人探索札記</h1>
+            <p>AI 智慧導覽，為您的旅程增添靈感與故事</p>
+             <div class="header-controls">
+                <button id="favoritesToggleBtn" class="btn">❤️ 我的收藏</button>
+                <button id="themeToggleBtn" class="btn">🌙 夜間模式</button>
+            </div>
+        </header>
+        
+        <!-- 我的收藏 Modal -->
+        <div id="favoritesModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <button id="closeFavoritesModalBtn" class="modal-close-btn">&times;</button>
+                <h3>❤️ 我的收藏</h3>
+                <div id="favoritesList">
+                    <p>尚未收藏任何景點。</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="steps-guide fade-in" style="--animation-delay: 0.1s;">
+            <div class="step">① 輸入 API 金鑰</div>
+            <div class="step">② 選擇探索國度</div>
+            <div class="step">③ 點選喜愛景點</div>
+            <div class="step">④ 開始 AI 互動</div>
+        </section>
+
+        <section class="panel api-config fade-in" style="--animation-delay: 0.2s;">
+            <h3>🔑 API 金鑰設定</h3>
+            <div class="api-input-group">
+                <div class="api-input-container">
+                    <input type="password" id="geminiApiKey" class="api-input" placeholder="請貼上您的 Gemini API Key">
+                    <small>到 <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> 申請免費 Key</small>
+                </div>
+                 <button class="btn verify-btn" id="verifyGeminiBtn">驗證 Gemini</button>
+            </div>
+            <div class="api-input-group" style="margin-top: 15px;">
+                 <div class="api-input-container">
+                     <input type="password" id="cwaApiKey" class="api-input" placeholder="請貼上 CWA API Key (僅限台灣天氣)">
+                     <small>到 <a href="https://opendata.cwa.gov.tw/user/authkey" target="_blank">中央氣象署平台</a> 申請免費 Key</small>
+                </div>
+                <button class="btn verify-btn" id="verifyCwaBtn">載入天氣</button>
+            </div>
+             <div class="api-input-group" style="margin-top: 15px;">
+                <div class="api-input-container">
+                    <input type="password" id="tdxClientId" class="api-input" placeholder="請貼上您的 TDX Client ID">
+                </div>
+                <div class="api-input-container">
+                    <input type="password" id="tdxClientSecret" class="api-input" placeholder="請貼上您的 TDX Client Secret">
+                     <small>到 <a href="https://tdx.transportdata.tw/user/register" target="_blank">TDX 運輸資料流通服務</a> 申請免費 Key</small>
+                </div>
+                <button class="btn verify-btn" id="verifyTdxBtn">驗證 TDX</button>
+            </div>
+            <div id="apiStatus" class="api-status hidden"></div>
+        </section>
+        
+        <section class="panel country-selector fade-in" style="--animation-delay: 0.3s;">
+             <div class="panel-header">
+                <h3>🌏 選擇探索國度</h3>
+                <div class="search-container">
+                    <input type="text" id="destinationSearch" class="api-input" placeholder="🔍 搜尋景點名稱或城市...">
+                </div>
+            </div>
+            <div class="country-tabs" id="countryTabs"></div>
+        </section>
+        
+        <section class="destinations" id="destinations"></section>
+
+        <section class="panel weather-suggestion-panel fade-in hidden" id="weatherSuggestionPanel" style="--animation-delay: 0.4s;">
+             <h3>💡 AI 行程規劃師</h3>
+             <input type="text" id="itineraryPrefs" class="api-input" placeholder="告訴 AI 您的喜好，例如：親子、文青、美食探險...">
+             <div class="suggestion-controls">
+                 <button class="suggestion-btn sunny" id="sunnyBtn">☀️ 晴天漫遊</button>
+                 <button class="suggestion-btn rainy" id="rainyBtn">🌧️ 雨天備案</button>
+                 <button class="suggestion-btn lucky" id="luckyBtn">🔮 驚喜旅程</button>
+                 <button class="suggestion-btn" id="multiDayBtn">📅 多日行程</button>
+             </div>
+             <div id="suggestionContentWrapper">
+                 <div id="suggestionContent" class="ai-bubble" style="margin-top:20px;">
+                     <p>點擊按鈕，讓 AI 為您量身打造專屬行程！</p>
+                 </div>
+                 <button id="downloadPdfBtn" class="btn hidden">📄 下載 PDF</button>
+             </div>
+             <div id="transportSuggestionContainer" class="hidden" style="margin-top: 20px;">
+                <button class="suggestion-btn" id="transportBtn">✨ 規劃交通建議</button>
+                <div id="transportContent" class="ai-bubble hidden" style="margin-top: 15px;"></div>
+            </div>
+        </section>
+
+        <div class="content-area hidden" id="contentArea">
+            <div class="description-panel panel fade-in">
+                 <h3>📖 景點故事集 (<span id="selectedDestinationName"></span>)</h3>
+                <div class="accordion-content">
+                    <div id="descriptionContent" class="ai-bubble"></div>
+                    <div class="enhanced-ai-controls">
+                        <button class="enhanced-btn" id="checklistBtn">🧳 行囊準備清單</button>
+                        <button class="enhanced-btn" id="poemBtn">✨ 生成景點詩篇</button>
+                        <button class="enhanced-btn" id="ttsBtn">🔊 語音導覽</button>
+                        <button class="enhanced-btn" id="cuisineBtn">🍲 在地美食推薦</button>
+                        <button class="enhanced-btn" id="findHotelBtn">🏨 尋找附近住宿</button>
+                        <button class="enhanced-btn" id="currencyConverterToggleBtn">💰 AI 旅費估算</button>
+                    </div>
+                     <div id="aiCurrencyConverter" class="hidden" style="margin-top: 20px; background: #f0f3e6; padding: 15px; border-radius: 8px;">
+                        <p style="font-weight: 600; margin-bottom: 10px; color: var(--dark-text);">AI 旅費估算</p>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                            <input type="number" id="amountToConvert" class="api-input" placeholder="輸入金額 (TWD)" style="flex: 1; min-width: 120px;">
+                            <input type="text" id="targetCurrency" class="api-input" placeholder="目標貨幣 (e.g., JPY)" style="flex: 1; min-width: 120px;">
+                        </div>
+                        <button class="btn" id="convertCurrencyBtn" style="background: var(--grass-green); color: white; width: 100%;">開始估算</button>
+                    </div>
+                    <div id="aiEnhancedContent" class="ai-bubble hidden" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+            <div class="map-panel panel fade-in">
+                <h3>🗺️ 地圖與攝影點</h3>
+                <div class="accordion-content">
+                    <div id="map"></div>
+                    <div id="imageGallery"></div>
+                    <div class="enhanced-ai-controls" style="grid-template-columns: 1fr;">
+                         <button class="enhanced-btn" id="photoSpotBtn">📸 AI 推薦攝影點</button>
+                    </div>
+                    <div id="aiPhotoSpotContent" class="ai-bubble hidden" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <!-- Custom JS Modules -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
+

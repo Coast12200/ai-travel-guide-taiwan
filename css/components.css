@@ -1,3 +1,52 @@
+/*
+ * CSS 命名與架構指南
+ * - 我們建議採用 BEM-like 命名（component-block__element--modifier）或使用 Utility-First 的思維（小型、可重用的 .u-* 工具類）
+ * - 為了低風險逐步遷移，先新增 BEM-style 元件別名（.c- 前綴），並保留現有類名以維持相容性。
+ * - 小型工具類（.u-*）可用於快速佈局、間距與顯示控制，減少樣式重複與全域污染。
+ */
+
+/* --- Utility classes (lightweight helpers, prefix: u-) --- */
+.u-hidden { display: none !important; }
+.u-flex { display:flex !important; }
+.u-inline-flex { display:inline-flex !important; }
+.u-center { justify-content: center; align-items: center; }
+.u-column { flex-direction: column; }
+.u-gap-8 { gap: 8px !important; }
+.u-gap-12 { gap: 12px !important; }
+.u-mb-8 { margin-bottom: 8px !important; }
+.u-mt-8 { margin-top: 8px !important; }
+.u-p-8 { padding: 8px !important; }
+.u-rounded { border-radius: 8px !important; }
+.u-transition { transition: all 0.2s ease !important; }
+.u-text-center { text-align: center !important; }
+
+/* --- Sticky action bar for long pages (mobile-friendly) --- */
+.sticky-action-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    display: flex;
+    justify-content: center;
+    pointer-events: auto;
+    z-index: 2200;
+}
+.sticky-action-bar .sticky-inner {
+    display: inline-flex;
+    gap: 8px;
+    background: rgba(255,255,255,0.95);
+    padding: 8px;
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(6px);
+}
+.sticky-action-bar .btn { padding: 10px 14px; font-size: 0.95rem; }
+
+/* Hide on large screens where top controls are readily available */
+@media(min-width: 900px) {
+    .sticky-action-bar { display: none; }
+}
+
 /* --- 主要容器與標題 --- */
 .container {
     max-width: 1200px;
@@ -167,6 +216,28 @@ small a {
 .verify-btn:hover { 
     background: #8abde4; 
 }
+
+/* --- Component aliases (BEM-like helpers, prefix: c-) ---
+    These are intentionally empty alias classes to encourage usage of a
+    component-prefixed naming convention (e.g. `c-btn`, `c-panel`, `c-card`).
+    They do NOT duplicate rules here to avoid drift; you can apply both
+    the original class and the `c-` alias in HTML during migration, e.g.
+    <button class="btn c-btn c-btn--primary">...
+
+    If you use a CSS preprocessor (Sass/LESS), you may replace these with
+    proper mixins or @extend directives. Keeping them empty prevents
+    runtime/compile errors in plain CSS setups.
+*/
+.c-btn { --c-alias: 1; }
+.c-btn--primary { background: var(--grass-green); color: white; }
+.c-btn--accent { background: var(--sun-orange); color: white; }
+
+.c-panel { --c-alias: 1; }
+.c-panel__header { --c-alias: 1; }
+
+.c-card { --c-alias: 1; }
+.c-card__picture { --c-alias: 1; }
+.c-card__content { --c-alias: 1; }
 .api-status { 
     margin-top: 10px; 
     padding: 10px; 
@@ -190,6 +261,19 @@ small a {
     margin-top: 10px;
     padding: 8px 16px;
 }
+
+/* Onboarding modal specific styles */
+.modal-overlay { position: fixed; left:0; right:0; top:0; bottom:0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.45); z-index: 3000; }
+.modal-overlay.hidden { display:none; }
+.modal-content { background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 640px; box-shadow: var(--shadow-md); }
+.modal-close-btn { position:absolute; right:18px; top:12px; background:transparent; border:none; font-size:1.6rem; cursor:pointer; }
+.onboard-step { padding: 8px 0; }
+.onboard-step h4 { margin: 6px 0; }
+.onboard-highlight { outline: 3px solid rgba(255,170,50,0.25); border-radius: 8px; }
+
+/* Diagnostics modal tweaks */
+#diagnosticsContent { white-space: pre-wrap; font-family: monospace; background: #fbfbfb; padding: 12px; border-radius: 8px; border: 1px solid #eee; max-height: 320px; overflow: auto; }
+.data-source-badge { font-size: 12px; }
 
 
 /* --- 國家與景點卡片 --- */
@@ -306,8 +390,27 @@ small a {
     border: none;
 }
 .destination-card:hover { 
-    transform: translateY(-8px); 
-    box-shadow: var(--shadow-md); 
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.12), 0 2px 6px rgba(16, 24, 40, 0.06);
+}
+
+/* 強化已選中卡片樣式，便於在長列表中定位 */
+.destination-card.selected {
+    border-color: var(--grass-green);
+    box-shadow: 0 14px 40px rgba(34, 197, 94, 0.12), 0 4px 10px rgba(34, 197, 94, 0.06);
+    transform: translateY(-6px) scale(1.01);
+    outline: 3px solid rgba(34,197,94,0.08);
+}
+
+/* 當卡片被收藏時，增加一個明顯的左側色條與更深色的陰影 */
+.destination-card .favorite-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(180deg, #ffd27f, #ff9f1c);
+    border-radius: 6px 0 0 6px;
 }
 
 /* 新增：卡片圖片樣式 */
@@ -678,6 +781,18 @@ small a {
     border-color: var(--sun-orange);
 }
 
+/* 更醒目的收藏按鈕（有陰影與微動態） */
+.favorite-btn.favorited {
+    box-shadow: 0 6px 18px rgba(255,159,28,0.16);
+    transform: translateY(-1px);
+}
+
+/* 可鍵盤聚焦的卡片輪廓，增強可及性 */
+.destination-card:focus-within, .destination-card:focus {
+    outline: 3px solid rgba(59,130,246,0.12);
+    box-shadow: 0 8px 24px rgba(14,165,233,0.06);
+}
+
 
 /* --- 響應式設計 --- */
 @media (max-width: 992px) {
@@ -715,6 +830,46 @@ small a {
         padding: 20px 10px 0;
     }
 }
+
+/* Mobile quick navigation (bottom fixed) */
+.mobile-quick-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    gap: 8px;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+    box-shadow: 0 -6px 18px rgba(16,24,40,0.08);
+    z-index: 2500;
+}
+.mobile-quick-nav .mobile-quick-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: white;
+    font-weight: 700;
+    color: var(--dark-text);
+}
+.mobile-quick-nav .mobile-quick-btn.primary {
+    background: var(--grass-green);
+    color: white;
+    border-color: var(--grass-green);
+}
+
+/* Hide on desktop where the sticky action bar is present */
+@media(min-width: 900px) {
+    .mobile-quick-nav { display: none; }
+}
+
+/* Temporary highlight for quick-nav target focus */
+.quick-nav-highlight {
+    box-shadow: 0 0 0 4px rgba(34,197,94,0.12) inset, 0 8px 30px rgba(34,197,94,0.06);
+    transition: box-shadow 0.4s ease;
+}
 @media (max-width: 768px) {
     .header h1 { font-size: 2.5rem; }
     .api-input-group { flex-direction: column; }
@@ -722,4 +877,123 @@ small a {
     .step:not(:last-child)::after { content: '↓'; right: auto; left: 5px; top: 20px; }
     .panel-header { flex-direction: column; align-items: stretch; }
 }
+
+/* --- 語言按鈕與資料來源徽章 --- */
+#langToggleBtn {
+    min-width: 48px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--off-white);
+    border: 1px solid var(--border-color);
+}
+
+.data-source-badge {
+    position: absolute;
+    right: 18px;
+    top: 12px;
+    background: var(--sun-orange);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    z-index: 5;
+    box-shadow: var(--shadow-sm);
+}
+
+.status-info {
+    background: linear-gradient(90deg, #fff8e6 0%, #f0f7ff 100%);
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+/* 調整 header 的 always-offline checkbox 文字樣式 */
+#alwaysOfflineToggle {
+    width: 18px;
+    height: 18px;
+}
+
+/* Button busy / loading visuals */
+.btn[aria-busy="true"] {
+    opacity: 0.85;
+    cursor: wait;
+    position: relative;
+    pointer-events: none;
+}
+.btn[aria-busy="true"]::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border: 2px solid rgba(255,255,255,0.6);
+    border-top-color: rgba(255,255,255,1);
+    border-radius: 50%;
+    box-shadow: none;
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Make disabled buttons slightly dimmer */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Always-offline checkbox visual tweak */
+label[style] input[type="checkbox"] {
+    accent-color: var(--sun-orange);
+    width: 18px;
+    height: 18px;
+}
+
+/* Toast notifications */
+#toastContainer .toast {
+    background: rgba(0,0,0,0.85);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-top: 8px;
+    min-width: 180px;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+#toastContainer .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Favorite button micro animation */
+.favorite-btn.animate {
+    animation: pop 0.35s ease;
+}
+@keyframes pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.25); }
+    100% { transform: scale(1); }
+}
+
+/* Card source badge (offline / live) */
+.destination-card .source-badge {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    z-index: 12;
+}
+.destination-card .source-badge.offline { background: var(--sun-orange); }
+.destination-card .source-badge.live { background: var(--grass-green); }
 

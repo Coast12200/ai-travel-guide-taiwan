@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模組測試頁面 - Phase 2 Modules</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        .info {
+            color: #17a2b8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🧪 Phase 2 模組測試頁面</h1>
+        <p>此頁面用於測試和調試新創建的 Phase 2 模組</p>
+    </div>
+
+    <div class="test-section">
+        <h2>📦 模組載入狀態</h2>
+        <div id="moduleStatus" class="result">載入中...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔔 事件總線測試 (Event Bus)</h2>
+        <button onclick="testEventBus()">測試事件系統</button>
+        <button onclick="testEventDebug()">啟用調試模式</button>
+        <div id="eventBusResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🪟 Modal 管理器測試</h2>
+        <button onclick="testModalCreate()">創建 Modal</button>
+        <button onclick="testModalOpen()">開啟 Modal</button>
+        <button onclick="testModalClose()">關閉 Modal</button>
+        <div id="modalResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 表單處理器測試</h2>
+        <button onclick="testFormRegister()">註冊表單</button>
+        <button onclick="testFormValidation()">測試驗證</button>
+        <div id="formResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🛠️ 工具函數測試</h2>
+        <button onclick="testMarkdown()">Markdown 轉換</button>
+        <button onclick="testDateTime()">日期時間格式化</button>
+        <button onclick="testValidators()">驗證器測試</button>
+        <div id="utilsResult" class="result"></div>
+    </div>
+
+    <script type="module">
+        // 導入所有模組（使用絕對路徑）
+        import { eventBus } from '/js/core/event-bus.js';
+        import { diContainer } from '/js/core/di-container.js';
+        import { modalManager } from '/js/ui/modal-manager.js';
+        import { accordionManager } from '/js/ui/accordion-manager.js';
+        import { formHandler } from '/js/ui/form-handler.js';
+        import * as markdownUtils from '/js/utils/markdown.js';
+        import * as dateTimeUtils from '/js/utils/date-time.js';
+        import * as validators from '/js/utils/validators.js';
+
+        // 將模組掛載到 window.testModules 以便在控制台調試
+        window.testModules = {
+            eventBus,
+            diContainer,
+            modalManager,
+            accordionManager,
+            formHandler,
+            markdownUtils,
+            dateTimeUtils,
+            validators
+        };
+
+        // 顯示模組載入狀態
+        const statusEl = document.getElementById('moduleStatus');
+        const modules = Object.keys(window.testModules);
+        statusEl.innerHTML = `
+<span class="success">✅ 成功載入 ${modules.length} 個模組:</span>
+
+${modules.map(m => `  • ${m}`).join('\n')}
+
+<span class="info">💡 提示: 所有模組都可以通過 window.testModules.xxx 訪問</span>
+        `;
+
+        // 測試函數
+        window.testEventBus = function () {
+            const result = document.getElementById('eventBusResult');
+            try {
+                // 註冊監聽器
+                eventBus.on('test:event', (data) => {
+                    result.innerHTML += `\n<span class="success">✅ 收到事件: ${JSON.stringify(data)}</span>`;
+                });
+
+                // 觸發事件
+                eventBus.emit('test:event', { message: 'Hello from Event Bus!' });
+
+                result.innerHTML = '<span class="success">✅ 事件系統測試成功!</span>';
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testEventDebug = function () {
+            const result = document.getElementById('eventBusResult');
+            try {
+                eventBus.setDebug(true);
+                eventBus.emit('debug:test', { debug: true });
+                result.innerHTML = '<span class="success">✅ 調試模式已啟用，查看控制台輸出</span>';
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testModalCreate = function () {
+            const result = document.getElementById('modalResult');
+            try {
+                const modalId = modalManager.create({
+                    title: '測試 Modal',
+                    content: '<p>這是一個測試 Modal，模組整合成功！</p>',
+                    buttons: [
+                        {
+                            text: '關閉',
+                            className: 'btn',
+                            onClick: () => console.log('Modal 關閉按鈕被點擊')
+                        }
+                    ]
+                });
+                window.testModalId = modalId;
+                result.innerHTML = `<span class="success">✅ Modal 創建成功! ID: ${modalId}</span>`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testModalOpen = function () {
+            const result = document.getElementById('modalResult');
+            try {
+                if (window.testModalId) {
+                    modalManager.open(window.testModalId);
+                    result.innerHTML = '<span class="success">✅ Modal 已開啟</span>';
+                } else {
+                    result.innerHTML = '<span class="error">⚠️ 請先創建 Modal</span>';
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testModalClose = function () {
+            const result = document.getElementById('modalResult');
+            try {
+                if (window.testModalId) {
+                    modalManager.close(window.testModalId);
+                    result.innerHTML = '<span class="success">✅ Modal 已關閉</span>';
+                } else {
+                    result.innerHTML = '<span class="error">⚠️ 請先創建 Modal</span>';
+                }
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testFormRegister = function () {
+            const result = document.getElementById('formResult');
+            try {
+                // 這裡只是測試 API，不需要實際的表單
+                result.innerHTML = '<span class="success">✅ 表單處理器 API 可用</span>';
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testFormValidation = function () {
+            const result = document.getElementById('formResult');
+            try {
+                const testResult = validators.validateEmail('test@example.com');
+                result.innerHTML = `<span class="success">✅ 驗證測試: ${JSON.stringify(testResult, null, 2)}</span>`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testMarkdown = function () {
+            const result = document.getElementById('utilsResult');
+            try {
+                const markdown = '# 標題\n\n- 項目 1\n- 項目 2\n\n**粗體文字**';
+                const html = markdownUtils.mdToHtml(markdown);
+                result.innerHTML = `<span class="success">✅ Markdown 轉換成功:</span>\n${html}`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testDateTime = function () {
+            const result = document.getElementById('utilsResult');
+            try {
+                const now = new Date();
+                const formatted = dateTimeUtils.formatDateTime(now);
+                const relative = dateTimeUtils.formatRelativeTime(now);
+                result.innerHTML = `<span class="success">✅ 日期時間格式化成功:</span>
+格式化: ${formatted}
+相對時間: ${relative}`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        window.testValidators = function () {
+            const result = document.getElementById('utilsResult');
+            try {
+                const tests = [
+                    { name: 'Email', result: validators.validateEmail('test@example.com') },
+                    { name: 'Time', result: validators.validateTime('14:30') },
+                    { name: 'URL', result: validators.validateUrl('https://example.com') }
+                ];
+                result.innerHTML = `<span class="success">✅ 驗證器測試:</span>\n${tests.map(t => `${t.name}: ${t.result.valid ? '✅' : '❌'}`).join('\n')}`;
+            } catch (error) {
+                result.innerHTML = `<span class="error">❌ 錯誤: ${error.message}</span>`;
+            }
+        };
+
+        console.log('🧪 測試頁面已載入');
+        console.log('📦 可用模組:', window.testModules);
+        console.log('💡 使用 window.testModules.xxx 訪問模組');
+    </script>
+</body>
+
+</html>

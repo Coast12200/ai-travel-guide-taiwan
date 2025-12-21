@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 旅人探索札記 - AI 智慧導覽</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/print.css">
+    <link rel="stylesheet" href="css/fix-map.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/smart-planner.css">
+    <link rel="stylesheet" href="css/itinerary-buttons.css">
+    <link rel="stylesheet" href="css/travel-journal.css">
+    <link rel="stylesheet" href="css/version-history.css">
+    <link rel="stylesheet" href="css/header-enhanced.css">
+    <link rel="stylesheet" href="css/download-progress.css">
+    <link rel="stylesheet" href="css/mobile-scroll-fix.css">
+    <link rel="stylesheet" href="css/itinerary-ui-enhanced.css">
+    <link rel="stylesheet" href="css/api-settings-enhanced.css">
+    <link rel="stylesheet" href="css/bottom-sheet-enhanced.css">
+    <link rel="stylesheet" href="css/country-selection-enhanced.css">
+    <link rel="stylesheet" href="css/search-enhanced.css">
+</head>
+
+<body>
+    <!-- 新增：骨架載入畫面 -->
+    <div id="loading-skeleton">
+        <div class="skeleton-header">
+            <div class="skeleton-title skeleton"></div>
+            <div class="skeleton-subtitle skeleton"></div>
+        </div>
+        <div class="skeleton-panel">
+            <div class="skeleton-line skeleton"></div>
+            <div class="skeleton-line skeleton"></div>
+        </div>
+        <div class="skeleton-panel">
+            <div class="skeleton-tabs">
+                <div class="skeleton-tab skeleton"></div>
+                <div class="skeleton-tab skeleton"></div>
+            </div>
+            <div class="skeleton-cards">
+                <div class="skeleton-card">
+                    <div class="skeleton-card-icon skeleton"></div>
+                    <div class="skeleton-card-text">
+                        <div class="skeleton-line skeleton"></div>
+                        <div class="skeleton-line skeleton"></div>
+                    </div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-card-icon skeleton"></div>
+                    <div class="skeleton-card-text">
+                        <div class="skeleton-line skeleton"></div>
+                        <div class="skeleton-line skeleton"></div>
+                    </div>
+                </div>
+                <div class="skeleton-card">
+                    <div class="skeleton-card-icon skeleton"></div>
+                    <div class="skeleton-card-text">
+                        <div class="skeleton-line skeleton"></div>
+                        <div class="skeleton-line skeleton"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container hidden">
+        <header class="header fade-in">
+            <!-- 標題區域 -->
+            <div class="header-title">
+                <h1 data-i18n="title">旅人探索札記</h1>
+                <p class="subtitle" data-i18n="subtitle">AI 智慧導覽，為您的旅程增添靈感與故事</p>
+            </div>
+
+            <!-- 控制按鈕區域 -->
+            <div class="header-controls">
+                <!-- 主要功能（左側） -->
+                <div class="controls-primary">
+                    <button id="favoritesToggleBtn" class="btn btn-header" data-i18n="favorites">
+                        <span class="btn-icon">❤️</span>
+                        <span class="btn-text">我的收藏</span>
+                    </button>
+                    <button id="themeToggleBtn" class="btn btn-header" data-i18n="theme_night">
+                        <span class="btn-icon">🌙</span>
+                        <span class="btn-text">夜間模式</span>
+                    </button>
+                    <button id="langToggleBtn" class="btn btn-header">
+                        <span class="btn-icon">🌐</span>
+                        <span class="btn-text">EN</span>
+                    </button>
+                </div>
+
+                <!-- 次要功能（右側） -->
+                <div class="controls-secondary">
+                    <div class="dropdown">
+                        <button class="btn btn-header dropdown-toggle" id="advancedSettingsBtn">
+                            <span class="btn-icon">⚙️</span>
+                            <span class="btn-text">進階設定</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-menu hidden" id="advancedSettingsMenu">
+                            <label class="dropdown-item">
+                                <input type="checkbox" id="alwaysOfflineToggle" aria-label="Always offline mode" />
+                                <span data-i18n="always_offline_label" id="alwaysOfflineLabel"
+                                    title="啟用後將強制使用離線備援資料，避免向 TDX 發出請求">
+                                    始終離線模式
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 天氣警報橫幅 -->
+            <div id="weatherAlertBanner" class="weather-alert hidden" role="status" aria-live="polite">
+                <div id="weatherAlertIcon" style="font-size:1.2rem;"></div>
+                <div id="weatherAlertText" style="flex:1; font-weight:600;"></div>
+                <button id="dismissWeatherAlertBtn" class="btn" title="關閉警示">✕</button>
+            </div>
+        </header>
+        <!-- Toast container -->
+        <div id="toastContainer" aria-live="polite" style="position: fixed; right: 20px; bottom: 20px; z-index: 2000;">
+        </div>
+
+        <!-- 我的收藏 Modal -->
+        <div id="favoritesModal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <button id="closeFavoritesModalBtn" class="modal-close-btn">&times;</button>
+                <h3>❤️ 我的收藏</h3>
+                <div id="favoritesList">
+                    <p>尚未收藏任何景點。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onboarding Modal -->
+        <div id="onboardingModal" class="modal-overlay hidden" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="onboardTitle">
+                <button id="closeOnboardingBtn" class="modal-close-btn">&times;</button>
+                <h3 id="onboardTitle">快速上手導引</h3>
+                <div id="onboardSteps" style="min-height:140px;">
+                    <!-- Steps will be injected by JS -->
+                </div>
+                <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+                    <button id="onboardPrevBtn" class="btn">上一步</button>
+                    <button id="onboardNextBtn" class="btn c-btn--primary">下一步</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagnostics Modal -->
+        <div id="diagnosticsModal" class="modal-overlay hidden" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="diagnosticsTitle">
+                <button id="closeDiagnosticsBtn" class="modal-close-btn">&times;</button>
+                <h3 id="diagnosticsTitle">Diagnostics / 診斷報告</h3>
+                <div id="diagnosticsContent" style="min-height:120px; font-size:0.95rem; color:var(--dark-text);"></div>
+                <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+                    <button id="copyDiagnosticsBtn" class="btn">Copy JSON</button>
+                    <button id="exportDiagnosticsBtn" class="btn c-btn--primary">Export</button>
+                </div>
+            </div>
+        </div>
+
+        <section class="steps-guide fade-in" style="--animation-delay: 0.1s;">
+            <div class="step" data-i18n="step1">① 輸入 API 金鑰</div>
+            <div class="step" data-i18n="step2">② 選擇探索國度</div>
+            <div class="step" data-i18n="step3">③ 點選喜愛景點</div>
+            <div class="step" data-i18n="step4">④ 開始 AI 互動</div>
+        </section>
+
+        <section class="panel api-config fade-in" style="--animation-delay: 0.2s;">
+            <h3 data-i18n="api_keys_title">🔑 API 金鑰設定</h3>
+            <!-- 必需 API -->
+            <div class="api-section required-section">
+                <div class="section-header">
+                    <h4>
+                        <span class="badge badge-required">必需</span>
+                        核心 AI 功能
+                    </h4>
+                    <p class="section-desc">以下 API 為必需，用於 AI 行程規劃</p>
+                </div>
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <div class="api-icon">🤖</div>
+                        <div class="api-info">
+                            <h5>Google Gemini API</h5>
+                            <p>AI 智慧行程生成引擎</p>
+                        </div>
+                        <div class="api-status" id="geminiStatus">
+                            <span class="status-badge status-pending">未驗證</span>
+                        </div>
+                    </div>
+                    <div class="api-card-body">
+                        <div class="input-with-action">
+                            <div class="input-wrapper">
+                                <input type="password" id="geminiApiKey" class="api-input enhanced"
+                                    placeholder="請貼上您的 Gemini API Key" autocomplete="off">
+                                <button class="input-toggle-btn" id="toggleGeminiKey" type="button"
+                                    title="顯示/隱藏 API Key">
+                                    <span class="show-icon">👁️</span>
+                                    <span class="hide-icon" style="display:none;">🙈</span>
+                                </button>
+                            </div>
+                            <button class="btn btn-verify" id="verifyGeminiBtn" data-i18n="verify_gemini">
+                                <span class="btn-icon">✓</span>
+                                <span class="btn-text">驗證</span>
+                            </button>
+                        </div>
+                        <div class="api-help">
+                            <a href="https://aistudio.google.com/app/apikey" target="_blank" class="help-link">
+                                <span class="link-icon">🔗</span>
+                                <span>前往 Google AI Studio 申請免費 Key</span>
+                                <span class="external-icon">↗</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 可選 API -->
+            <div class="api-section optional-section">
+                <div class="section-header">
+                    <h4>
+                        <span class="badge badge-optional">可選</span>
+                        增強功能
+                    </h4>
+                    <p class="section-desc">以下 API 為可選，用於天氣預報和景點資訊</p>
+                </div>
+                <!-- CWA API Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <div class="api-icon">🌤️</div>
+                        <div class="api-info">
+                            <h5>中央氣象署 API</h5>
+                            <p>即時天氣預報與警報（僅限台灣）</p>
+                        </div>
+                        <div class="api-status" id="cwaStatus">
+                            <span class="status-badge status-optional">可選</span>
+                        </div>
+                    </div>
+                    <div class="api-card-body">
+                        <div class="input-with-action">
+                            <div class="input-wrapper">
+                                <input type="password" id="cwaApiKey" class="api-input enhanced"
+                                    placeholder="請貼上 CWA API Key（選填）" autocomplete="off">
+                                <button class="input-toggle-btn" id="toggleCwaKey" type="button" title="顯示/隱藏 API Key">
+                                    <span class="show-icon">👁️</span>
+                                    <span class="hide-icon" style="display:none;">🙈</span>
+                                </button>
+                            </div>
+                            <button class="btn btn-verify" id="verifyCwaBtn" data-i18n="verify_cwa">
+                                <span class="btn-icon">✓</span>
+                                <span class="btn-text">載入天氣</span>
+                            </button>
+                        </div>
+                        <div class="api-help">
+                            <a href="https://opendata.cwa.gov.tw/user/authkey" target="_blank" class="help-link">
+                                <span class="link-icon">🔗</span>
+                                <span>前往中央氣象署平台申請免費 Key</span>
+                                <span class="external-icon">↗</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- TDX API Card -->
+                <div class="api-card">
+                    <div class="api-card-header">
+                        <div class="api-icon">🚇</div>
+                        <div class="api-info">
+                            <h5>TDX 運輸資料 API</h5>
+                            <p>景點資訊與交通數據</p>
+                        </div>
+                        <div class="api-status" id="tdxStatus">
+                            <span class="status-badge status-optional">可選</span>
+                        </div>
+                    </div>
+                    <div class="api-card-body">
+                        <div class="input-row">
+                            <div class="input-wrapper">
+                                <input type="password" id="tdxClientId" class="api-input enhanced"
+                                    placeholder="TDX Client ID（選填）" autocomplete="off">
+                                <button class="input-toggle-btn" id="toggleTdxClientId" type="button"
+                                    title="顯示/隱藏 Client ID">
+                                    <span class="show-icon">👁️</span>
+                                    <span class="hide-icon" style="display:none;">🙈</span>
+                                </button>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="password" id="tdxClientSecret" class="api-input enhanced"
+                                    placeholder="TDX Client Secret（選填）" autocomplete="off">
+                                <button class="input-toggle-btn" id="toggleTdxSecret" type="button"
+                                    title="顯示/隱藏 Client Secret">
+                                    <span class="show-icon">👁️</span>
+                                    <span class="hide-icon" style="display:none;">🙈</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-verify btn-full-width" id="verifyTdxBtn" data-i18n="verify_tdx">
+                                <span class="btn-icon">✓</span>
+                                <span class="btn-text">驗證 TDX</span>
+                            </button>
+                            <button class="btn btn-secondary" id="forceRefreshBtn" title="清除 TDX 快取並重新載入即時資料">
+                                <span>🔄</span>
+                                <span>Force refresh</span>
+                            </button>
+                        </div>
+                        <div class="api-help">
+                            <a href="https://tdx.transportdata.tw/user/register" target="_blank" class="help-link">
+                                <span class="link-icon">🔗</span>
+                                <span>前往 TDX 運輸資料平台申請免費 Key</span>
+                                <span class="external-icon">↗</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 診斷工具 -->
+            <div class="api-tools">
+                <button class="btn btn-secondary btn-sm" id="showDiagnosticsBtn">
+                    <span>🔍</span>
+                    <span>顯示診斷報告</span>
+                </button>
+            </div>
+            <div id="apiStatus" class="api-status hidden"></div>
+        </section>
+
+        <section class="panel country-selector fade-in" style="--animation-delay: 0.3s;">
+            <!-- 優化的標題區域 -->
+            <div class="panel-header-enhanced">
+                <div class="header-title-group">
+                    <h3 data-i18n="country_selector_title">🌏 選擇探索國度</h3>
+                    <p class="header-subtitle">探索台灣各地美景，規劃您的完美旅程</p>
+                </div>
+                <div class="header-actions">
+                    <div class="search-container">
+                        <input type="text" id="destinationSearch" class="api-input"
+                            data-i18n-placeholder="search_placeholder" placeholder="🔍 搜尋景點名稱或城市...">
+                        <button id="searchClearBtn" type="button" class="search-clear-btn" title="清除搜尋"
+                            style="display:none;">✕</button>
+                    </div>
+                    <button id="addCustomSpotBtn" type="button" class="btn btn-primary"
+                        data-i18n="add_custom_spot_title">
+                        <span class="btn-icon">+</span>
+                        <span class="btn-text">新增自訂景點</span>
+                    </button>
+                </div>
+            </div>
+            <!-- 國家標籤 -->
+            <div class="country-tabs-enhanced" id="countryTabs"></div>
+        </section>
+
+        <section class="destinations" id="destinations"></section>
+        <!-- 搜尋無結果提示 -->
+        <div id="searchNoResults" class="search-no-results" style="display:none;">
+            <div class="no-results-icon">🔍</div>
+            <p data-i18n="search_no_results">找不到符合的景點</p>
+            <small data-i18n="search_no_results_hint">請嘗試其他關鍵字或清除搜尋</small>
+        </div>
+
+
+        <section class="panel weather-suggestion-panel fade-in hidden" id="weatherSuggestionPanel"
+            style="--animation-delay: 0.4s;">
+            <h3 data-i18n="ai_planner_title">💡 AI 行程規劃師</h3>
+
+            <!-- 快速開始區塊 -->
+            <div class="quick-start-section">
+                <!-- 喜好輸入 -->
+                <div class="preference-input-group">
+                    <input type="text" id="itineraryPrefs" class="api-input preference-input"
+                        placeholder="您想要什麼樣的旅程？(例如: 親子友善、美食探索、文青慢活...)">
+                    <button id="voiceInputBtn" class="btn voice-btn" title="語音輸入">🎤</button>
+                </div>
+                <span id="voiceStatus" style="font-size:0.9rem; color:var(--muted); display:none;">Listening...</span>
+
+                <!-- 基本資訊單行 -->
+                <div class="basic-info-row">
+                    <div class="info-item">
+                        <label>📍 目的地</label>
+                        <select id="destinationSelect" class="api-input compact">
+                            <option value="taiwan">台灣</option>
+                        </select>
+                    </div>
+
+                    <div class="info-item">
+                        <label>👥 人數</label>
+                        <input type="number" id="groupSizeInput" class="api-input compact" min="1" value="2">
+                    </div>
+
+                    <div class="info-item">
+                        <label>📅 日期</label>
+                        <input type="date" id="itineraryDate" class="api-input compact">
+                    </div>
+
+                    <div class="info-item">
+                        <label>🕐 時長</label>
+                        <select id="durationTypeSelect" class="api-input compact">
+                            <option value="single">單日遊</option>
+                            <option value="multi">多日遊</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 主要行程類型按鈕 -->
+                <div class="suggestion-controls-enhanced">
+                    <button class="suggestion-btn-enhanced sunny-enhanced" id="sunnyBtn">
+                        <span class="btn-icon">☀️</span>
+                        <span class="btn-text">
+                            <strong>晴天漫遊</strong>
+                            <small>戶外景點 · 陽光明媚</small>
+                        </span>
+                    </button>
+
+                    <button class="suggestion-btn-enhanced rainy-enhanced" id="rainyBtn">
+                        <span class="btn-icon">🌧️</span>
+                        <span class="btn-text">
+                            <strong>雨天備案</strong>
+                            <small>室內活動 · 避雨好去處</small>
+                        </span>
+                    </button>
+
+                    <button class="suggestion-btn-enhanced lucky-enhanced" id="luckyBtn">
+                        <span class="btn-icon">🔮</span>
+                        <span class="btn-text">
+                            <strong>隨機探索</strong>
+                            <small>AI 挑選 · 驚喜景點</small>
+                        </span>
+                    </button>
+
+                    <button class="suggestion-btn-enhanced multi-enhanced" id="multiDayBtn">
+                        <span class="btn-icon">📅</span>
+                        <span class="btn-text">
+                            <strong>多日行程</strong>
+                            <small>深度旅遊 · 2-7天</small>
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <!-- 行程操作按鈕 -->
+            <!-- 更多設定摺疊區塊 -->
+            <div class="more-settings-section">
+                <button class="more-settings-toggle" id="moreSettingsToggle" type="button" aria-expanded="false">
+                    <span class="toggle-text">⚙️ 更多設定</span>
+                    <span class="toggle-icon">▼</span>
+                </button>
+
+                <div class="more-settings-content" id="moreSettingsContent">
+                    <!-- 時間設定 (僅單日遊顯示) -->
+                    <div class="settings-group time-settings" id="timeSettingsGroup">
+                        <h4 class="settings-group-title">🕐 時間安排</h4>
+                        <div class="settings-row">
+                            <div class="setting-item">
+                                <label>開始時間</label>
+                                <input type="time" id="itineraryStartTime" class="api-input" value="09:00">
+                            </div>
+                            <div class="setting-item">
+                                <label>結束時間</label>
+                                <input type="time" id="itineraryEndTime" class="api-input" value="18:00">
+                            </div>
+                        </div>
+                        <small class="hint-text">或直接輸入總時長 (例如: 6小時)</small>
+                    </div>
+
+                    <!-- 多日遊天數 (僅多日遊顯示) -->
+                    <div class="settings-group multi-day-settings" id="multiDaySettingsGroup" style="display:none;">
+                        <h4 class="settings-group-title">📅 行程天數</h4>
+                        <div class="settings-row">
+                            <div class="setting-item">
+                                <label>天數</label>
+                                <input type="number" id="tripDaysInput" class="api-input" min="1" max="7" value="3">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 團體成員 -->
+                    <div class="settings-group">
+                        <h4 class="settings-group-title">👨‍👩‍👧‍👦 團體成員</h4>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="groupHasChildren">
+                                <span>有小孩</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="groupHasSeniors">
+                                <span>有長者</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="groupVegetarian">
+                                <span>素食者</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="groupWheelchair">
+                                <span>無障礙需求</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 預算與餐飲 -->
+                    <div class="settings-group">
+                        <h4 class="settings-group-title">💰 預算 & 🍽️ 餐飲</h4>
+                        <div class="settings-row">
+                            <div class="setting-item">
+                                <label>預算等級</label>
+                                <select id="budgetLevelSelect" class="api-input">
+                                    <option value="budget">💵 節儉 (NT$800-1,500/天)</option>
+                                    <option value="comfort" selected>💴 舒適 (NT$1,500-3,000/天)</option>
+                                    <option value="luxury">💎 豪華 (NT$3,000-5,000/天)</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>餐飲偏好</label>
+                                <select id="diningPreferenceSelect" class="api-input">
+                                    <option value="local-street" selected>🍜 當地小吃 (平價)</option>
+                                    <option value="casual-restaurant">🍱 普通餐廳 (中等)</option>
+                                    <option value="fine-dining">🍷 高檔餐廳 (奢華)</option>
+                                    <option value="mixed">🍽️ 混合搭配</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- 估算按鈕 -->
+                        <div class="settings-row" style="margin-top: 12px;">
+                            <div class="setting-item" style="grid-column: 1 / -1;">
+                                <button id="estimateBudgetBtn" class="btn" style="width: 100%; padding: 12px;">
+                                    💰 估算旅費
+                                </button>
+                                <small class="hint-text" style="margin-top: 8px;">
+                                    根據您的預算等級、餐飲偏好和行程天數，AI 將為您估算詳細的旅費分配。
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 交通與風格 -->
+                    <div class="settings-group">
+                        <h4 class="settings-group-title">🚗 交通 & ✨ 風格</h4>
+                        <div class="settings-row">
+                            <div class="setting-item">
+                                <label>交通方式</label>
+                                <select id="transportModeSelect" class="api-input">
+                                    <option value="driving">🚗 私家車 / 駕車</option>
+                                    <option value="public">🚌 大眾運輸</option>
+                                    <option value="walking">🚶 步行</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>旅行風格</label>
+                                <select id="itineraryStyleSelect" class="api-input">
+                                    <option value="">— 選擇風格 —</option>
+                                    <option value="文青慢活">📚 文青慢活</option>
+                                    <option value="極限挑戰">🏔️ 極限挑戰</option>
+                                    <option value="美食探索">🍴 美食探索</option>
+                                    <option value="親子友善">👨‍👩‍👧 親子友善</option>
+                                    <option value="自然生態">🌿 自然生態</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 圖片上傳 -->
+                    <div class="settings-group">
+                        <h4 class="settings-group-title">📷 視覺參考 (可選)</h4>
+                        <div class="image-upload-compact">
+                            <input type="file" id="aiImageUpload" accept="image/*" class="api-input">
+                            <div class="upload-actions">
+                                <button id="attachImageBtn" class="btn btn-sm">附加到 AI</button>
+                                <button id="clearImageBtn" class="btn btn-sm">清除</button>
+                            </div>
+                        </div>
+                        <div id="aiImagePreviewWrapper" class="image-preview-compact" style="display:none;">
+                            <img id="aiImagePreview" alt="預覽">
+                            <small id="aiImagePreviewInfo"></small>
+                        </div>
+                        <small class="hint-text">上傳圖片後，AI 將分析圖片主要色調、構圖與尺寸，並把視覺風格納入行程建議。</small>
+                    </div>
+                </div>
+            </div>
+            <div class="itinerary-actions" id="itineraryActions"
+                style="display:none; margin-top:20px; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-secondary" id="openDownloadSheet" title="下載行程">下載行程</button>
+                <button class="btn btn-secondary" id="transportBtn" title="查看交通規劃建議">🚗 交通規劃</button>
+            </div>
+            <div id="suggestionContentWrapper">
+                <div id="suggestionContent" class="ai-bubble" style="margin-top:20px;">
+                    <p>點擊按鈕，讓 AI 為您量身打造專屬行程！</p>
+                </div>
+                <div id="itineraryCoverContainer" class="ai-bubble hidden" style="margin-top:20px; text-align:center;">
+                    <img id="itineraryCoverImage" style="max-width:100%; border-radius:8px;" alt="行程封面" />
+                    <div class="download-controls"></div>
+
+                </div>
+                <button id="downloadTransportPdfBtn" class="btn hidden" style="margin-top: 12px;">📄 下載交通 PDF</button>
+            </div>
+        </section>
+
+        <div class="content-area hidden" id="contentArea">
+            <div class="description-panel panel fade-in">
+                <h3>📖 景點故事集 (<span id="selectedDestinationName"></span>)</h3>
+                <div class="accordion-content">
+                    <div id="descriptionStoryWrapper" class="story-container">
+                        <div id="descriptionContent" class="ai-bubble"></div>
+                    </div>
+                    <div id="attractionIllustrationContainer" class="ai-bubble hidden"
+                        style="margin-top:20px; text-align:center;">
+                        <img id="attractionIllustration"
+                            style="max-width:100%; max-height:400px; border-radius:8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
+                    </div>
+                    <div class="enhanced-ai-controls">
+                        <button class="enhanced-btn" id="checklistBtn">🧳 行囊準備清單</button>
+                        <button class="enhanced-btn" id="cuisineBtn">🍲 在地美食推薦</button>
+                        <button class="enhanced-btn" id="findHotelBtn">🏨 尋找附近住宿</button>
+                        <button class="enhanced-btn" id="reviewSummaryBtn">📝 網路評論摘要</button>
+                        <button class="enhanced-btn" id="souvenirBtn">🎁 伴手禮推薦</button>
+                    </div>
+                    <!-- (已移至進階設定) 圖片上傳控件現在位於「進階設定 (可選)」中 -->
+                    <div id="aiCurrencyConverter" class="hidden"
+                        style="margin-top: 20px; background: #f0f3e6; padding: 15px; border-radius: 8px;">
+                        <p style="font-weight: 600; margin-bottom: 10px; color: var(--dark-text);">AI 旅費估算</p>
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                            <input type="number" id="amountToConvert" class="api-input" placeholder="輸入金額 (TWD)"
+                                style="flex: 1; min-width: 120px;">
+                            <input type="text" id="targetCurrency" class="api-input" placeholder="目標貨幣 (e.g., JPY)"
+                                style="flex: 1; min-width: 120px;">
+                        </div>
+                        <button class="btn" id="convertCurrencyBtn"
+                            style="background: var(--grass-green); color: white; width: 100%;">開始估算</button>
+                    </div>
+                    <div id="aiEnhancedContent" class="ai-bubble hidden" style="margin-top: 20px;"></div>
+                    <!-- 專用：在地美食推薦容器（Markdown 會被轉成 HTML 並套用 .food-spots-list） -->
+                    <div id="foodSpotsContainer" class="ai-bubble hidden" style="margin-top: 20px;"></div>
+                    <div id="reviewSummaryContent" class="ai-bubble hidden" style="margin-top:12px;"></div>
+                    <div id="souvenirContent" class="ai-bubble hidden" style="margin-top:12px;"></div>
+                    <div id="ttsPlayerContainer" class="ai-bubble hidden"
+                        style="margin-top: 12px; padding: 12px; display:flex; flex-direction:column; gap:8px;">
+                        <!-- Audio player will be injected here by JS -->
+                        <audio id="ttsAudio" controls style="width:100%; display:none;"></audio>
+                        <div id="ttsTranscript" style="font-size:0.95rem; color:var(--dark-text); display:none;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="map-panel panel fade-in">
+                <h3>🗺️ 地圖與攝影點</h3>
+                <div class="accordion-content">
+                    <div id="map"></div>
+                    <div id="imageGallery"></div>
+                    <div class="enhanced-ai-controls" style="grid-template-columns: 1fr;">
+                        <button class="enhanced-btn" id="photoSpotBtn">📸 AI 推薦攝影點</button>
+                    </div>
+                    <div id="aiPhotoSpotContent" class="ai-bubble photo-spots-markdown-container hidden"
+                        style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <!-- Leaflet Routing Machine (for route calculation) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.min.js"></script>
+    <!-- Leaflet Heatmap plugin -->
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+    <!-- Optionally include OSRM routing backend usage via LRM (no API key required; demo server) -->
+    <!-- Custom JS Modules -->
+    <!-- 版本歷史功能模組 -->
+    <script type="module">
+        import { initVersionHistoryUI } from './js/version-history-ui.js';
+        import { saveItineraryVersion } from './js/version-history.js';
+
+        // 等待 DOM 載入完成
+        window.addEventListener('DOMContentLoaded', () => {
+            // 延遲初始化，確保其他元素已載入
+            setTimeout(() => {
+                try {
+                    initVersionHistoryUI();
+                    console.log('✅ Version history UI initialized');
+                } catch (error) {
+                    console.error('❌ Failed to initialize version history UI:', error);
+                }
+            }, 500);
+        });
+
+        // 暴露函數給全域使用
+        window.saveItineraryVersion = saveItineraryVersion;
+    </script>
+    <script type="module" src="js/main.js"></script>
+    <script>
+        // Utility to enable and focus the destination search input.
+        (function () {
+            function enableSearch(focus = true) {
+                const el = document.getElementById('destinationSearch');
+                if (!el) return false;
+                el.classList.remove('hidden');
+                el.disabled = false;
+                if (focus) {
+                    try { el.focus(); el.select(); } catch (e) { }
+                }
+                return true;
+            }
+            // Expose for console or other modules
+            window.enableSearch = enableSearch;
+
+            // Keyboard shortcut: '/' focuses search when not typing
+            document.addEventListener('keydown', function (e) {
+                if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+                    const active = document.activeElement;
+                    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+                    const ok = enableSearch(true);
+                    if (ok) e.preventDefault();
+                }
+            });
+
+            // Auto-enable when URL contains ?search=1
+            try {
+                if (new URLSearchParams(location.search).get('search') === '1') enableSearch(false);
+            } catch (e) { }
+        })();
+    </script>
+    <script>
+        // Budget slider and select sync
+        (function () {
+            document.addEventListener('DOMContentLoaded', function () {
+
+                // Budget slider <-> select sync
+                const slider = document.getElementById('budgetSlider');
+                const select = document.getElementById('budgetSelect');
+                if (slider && select) {
+                    const mapValToOption = ['low', 'medium', 'high'];
+                    slider.addEventListener('input', function () { select.value = mapValToOption[Number(slider.value)]; });
+                    select.addEventListener('change', function () { slider.value = mapValToOption.indexOf(select.value); });
+                }
+            });
+        })();
+    </script>
+    <!-- Left circular navigation (desktop+mobile) -->
+    <nav id="leftCircleNav" class="left-circle-nav" aria-label="快速功能選單">
+        <button class="circle-toggle" id="circleToggle" aria-expanded="false" aria-label="開啟功能選單">☰</button>
+        <ul class="circle-menu" id="circleMenu" aria-hidden="true">
+            <li><button class="circle-item" data-target="destinations" title="前往景點清單">📍</button></li>
+            <li><button class="circle-item" data-target="contentArea" title="前往行程/地圖">🗺️</button></li>
+            <li><button class="circle-item" data-target="descriptionContent" title="前往景點故事">📖</button></li>
+            <li><button class="circle-item" data-target="favoritesModal" title="我的收藏 (開啟)">❤️</button></li>
+        </ul>
+    </nav>
+
+    <!-- Right quick-jump buttons (top / bottom) -->
+    <div id="quickJumpButtons" class="quick-jump-buttons" aria-hidden="false">
+        <button id="jumpTopBtn" class="quick-jump" title="回到頁面頂部">↑</button>
+        <button id="jumpBottomBtn" class="quick-jump" title="回到頁面底部">↓</button>
+    </div>
+
+    <!-- Add Custom Spot Modal -->
+    <div id="addCustomSpotModal" class="modal-overlay hidden" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="addCustomSpotTitle"
+            style="max-width:700px;">
+            <button id="closeAddSpotModal" class="modal-close-btn">&times;</button>
+            <h3 id="addCustomSpotTitle" data-i18n="add_custom_spot_title">＋ 新增自訂景點</h3>
+            <form id="addCustomSpotForm">
+                <div style="display:flex; gap:8px; margin-bottom:8px;">
+                    <input id="customSpotName" class="api-input" data-i18n-placeholder="custom_spot_name_placeholder"
+                        placeholder="景點名稱" required style="flex:1;" />
+                    <input id="customSpotCity" class="api-input" data-i18n-placeholder="custom_spot_city_placeholder"
+                        placeholder="城市 (選填)" style="width:180px;" />
+                </div>
+                <div style="margin-bottom:8px;">
+                    <input id="customSpotImage" class="api-input" data-i18n-placeholder="custom_spot_image_placeholder"
+                        placeholder="圖片 URL (選填)" style="width:100%;" />
+                </div>
+                <div style="margin-bottom:12px;">
+                    <textarea id="customSpotDesc" class="api-input" data-i18n-placeholder="custom_spot_desc_placeholder"
+                        placeholder="簡短描述 (選填)" style="width:100%; min-height:120px;"></textarea>
+                </div>
+                <div style="display:flex; gap:8px; justify-content:flex-end;">
+                    <button type="button" id="cancelAddSpot" class="btn" data-i18n="cancel_button">取消</button>
+                    <button type="submit" id="submitAddSpot" class="btn c-btn--primary"
+                        data-i18n="add_spot_button">新增景點</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 下載行程底部彈窗 -->
+    <div id="downloadBackdrop" class="download-backdrop" style="display:none;"></div>
+    <div id="downloadBottomSheet" class="download-bottom-sheet">
+        <div class="bottom-sheet-header">
+            <h4>📥 下載行程</h4>
+            <button id="closeBottomSheetBtn" class="bottom-sheet-close" aria-label="關閉">✕</button>
+        </div>
+        <div class="bottom-sheet-content">
+            <button class="download-option" data-format="pdf">
+                <span>📄</span>
+                <span>PDF 文件</span>
+            </button>
+            <button class="download-option" data-format="ics">
+                <span>📅</span>
+                <span>iCalendar (.ics)</span>
+            </button>
+            <button class="download-option" data-format="csv">
+                <span>📊</span>
+                <span>CSV 試算表</span>
+            </button>
+            <button class="download-option" data-format="text">
+                <span>📝</span>
+                <span>純文字</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- i18n Injector Script - 自動注入翻譯屬性 -->
+    <script src="js/i18n-injector.js"></script>
+    <script type="module" src="js/button-fix.js"></script>
+    <!-- 按鈕對齊腳本 -->
+    <script src="js/align-buttons.js"></script>
+
+</body>
+
+</html>

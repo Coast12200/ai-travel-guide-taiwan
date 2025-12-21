@@ -1,0 +1,439 @@
+/* 修復地圖顯示和改為垂直佈局 - 優化版本 */
+
+/* AI 互動區塊 - 改為上下排列，優化間距 */
+.content-area {
+    display: grid;
+    grid-template-columns: 1fr !important;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+/* 面板樣式優化 */
+.content-area .panel {
+    background: var(--bg-panel);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+}
+
+.content-area .panel:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* 面板標題優化 */
+.content-area .panel h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--sky-blue);
+    color: var(--dark-text);
+}
+
+/* 地圖樣式優化 */
+#map {
+    height: 100%;
+    min-height: 450px;
+    max-height: 600px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 景點故事集容器優化 */
+.description-panel .accordion-content {
+    max-height: none;
+}
+
+/* 地圖面板容器優化 */
+.map-panel .accordion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* 補充缺失的樣式 */
+.destination-card p {
+    color: var(--light-text);
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+.destination-card-content p {
+    flex-grow: 1;
+}
+
+.weather-info {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--grass-green);
+    background: var(--weather-bg);
+    padding: 4px 10px;
+    border-radius: 20px;
+    align-self: flex-start;
+    margin-top: 15px;
+}
+
+.region-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.8rem;
+    color: var(--dark-text);
+    padding-bottom: 10px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--sky-blue);
+    width: 100%;
+    grid-column: 1 / -1;
+}
+
+.ai-bubble {
+    background: linear-gradient(135deg, #fff1e6 0%, var(--sky-blue) 100%);
+    border-radius: 12px;
+    padding: 20px;
+    line-height: 1.7;
+    font-size: 1.05rem;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.ai-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: var(--sky-blue);
+    transition: border-top-color 0.3s ease;
+}
+
+#suggestionContentWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#suggestionContent {
+    margin-top: 20px;
+    background: linear-gradient(135deg, #fff1e6 0%, #e0eaff 100%);
+}
+
+/* 響應式設計優化 */
+@media (max-width: 768px) {
+    .content-area {
+        gap: 24px;
+    }
+
+    .content-area .panel {
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    #map {
+        min-height: 350px;
+        max-height: 450px;
+    }
+
+    .content-area .panel h3 {
+        font-size: 1.3rem;
+    }
+}
+
+/* 深色模式優化 */
+body.dark-mode .content-area .panel {
+    background: #2b2b2b;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .content-area .panel:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .content-area .panel h3 {
+    color: #f5f5f5;
+    border-bottom-color: var(--sky-blue);
+}
+
+/* ============================================
+   進階設定下拉選單優化
+   ============================================ */
+
+/* 下拉選單容器增強 */
+.dropdown-menu {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 12px !important;
+    padding: 12px 0 !important;
+    min-width: 240px !important;
+}
+
+/* 下拉選單項目優化 */
+.dropdown-item {
+    padding: 12px 20px !important;
+    margin: 4px 8px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer;
+    position: relative;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8f0ff 100%) !important;
+    transform: translateX(4px);
+}
+
+.dropdown-item:active {
+    transform: translateX(2px) scale(0.98);
+}
+
+/* Checkbox 樣式優化 */
+.dropdown-item input[type="checkbox"] {
+    width: 18px !important;
+    height: 18px !important;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.dropdown-item input[type="checkbox"]:hover {
+    transform: scale(1.1);
+}
+
+.dropdown-item input[type="checkbox"]:checked {
+    background: var(--primary-color, #667eea);
+    border-color: var(--primary-color, #667eea);
+}
+
+/* 文字標籤優化 */
+.dropdown-item span {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--dark-text, #333);
+    line-height: 1.4;
+    transition: color 0.2s ease;
+}
+
+.dropdown-item:hover span {
+    color: var(--primary-color, #667eea);
+}
+
+/* 下拉箭頭動畫優化 */
+.dropdown-arrow {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.dropdown.active .dropdown-arrow {
+    transform: rotate(180deg) !important;
+    color: var(--primary-color, #667eea);
+}
+
+/* 下拉選單顯示動畫優化 */
+.dropdown-menu.show {
+    animation: smoothSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+@keyframes smoothSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 深色模式下的進階設定優化 */
+body.dark-mode .dropdown-menu {
+    background: rgba(42, 42, 42, 0.98) !important;
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4),
+        0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark-mode .dropdown-item {
+    color: #e0e0e0;
+}
+
+body.dark-mode .dropdown-item:hover {
+    background: linear-gradient(135deg, #3a3a3a 0%, #404040 100%) !important;
+}
+
+body.dark-mode .dropdown-item span {
+    color: #e0e0e0;
+}
+
+body.dark-mode .dropdown-item:hover span {
+    color: #8b9aff;
+}
+
+body.dark-mode .dropdown-arrow {
+    color: #a0a0a0;
+}
+
+body.dark-mode .dropdown.active .dropdown-arrow {
+    color: #8b9aff;
+}
+
+/* 添加分隔線（如果有多個選項） */
+.dropdown-item+.dropdown-item {
+    margin-top: 2px;
+}
+
+/* 為 checkbox 添加焦點樣式 */
+.dropdown-item input[type="checkbox"]:focus {
+    outline: 2px solid var(--primary-color, #667eea);
+    outline-offset: 2px;
+}
+
+/* 提示文字樣式優化 */
+.dropdown-item span[title] {
+    cursor: help;
+    position: relative;
+}
+
+.dropdown-item span[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    z-index: 1001;
+    pointer-events: none;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 響應式優化 */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        min-width: 200px !important;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    .dropdown-menu.show {
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ============================================
+   空間優化 - 善用螢幕空間
+   ============================================ */
+
+/* 增加容器最大寬度，減少左右空白 */
+.container {
+    max-width: 1400px !important;
+    padding: 20px 40px !important;
+}
+
+/* 優化 header 寬度 */
+.header {
+    max-width: 100% !important;
+}
+
+/* 優化面板寬度 */
+.panel {
+    max-width: 100% !important;
+}
+
+/* API 設定區域優化 */
+.api-config {
+    max-width: 100% !important;
+}
+
+/* 優化 API 卡片間距 */
+.api-card {
+    margin-bottom: 16px !important;
+}
+
+/* 步驟指南優化 */
+.steps-guide {
+    max-width: 100% !important;
+    padding: 16px 20px !important;
+}
+
+/* 內容區域優化 */
+.content-area {
+    max-width: 100% !important;
+}
+
+/* 大螢幕優化（≥1600px） */
+@media (min-width: 1600px) {
+    .container {
+        max-width: 1600px !important;
+        padding: 20px 60px !important;
+    }
+}
+
+/* 中等螢幕優化（1200px - 1599px） */
+@media (min-width: 1200px) and (max-width: 1599px) {
+    .container {
+        max-width: 1400px !important;
+        padding: 20px 40px !important;
+    }
+}
+
+/* 小螢幕保持原有設計 */
+@media (max-width: 768px) {
+    .container {
+        padding: 16px 20px !important;
+    }
+}
+
+/* 優化內容區域的面板寬度 */
+.content-area .panel {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* 地圖容器優化 */
+.map-panel {
+    width: 100%;
+}
+
+/* 景點故事集優化 */
+.description-panel {
+    width: 100%;
+}
+
+/* 減少不必要的外邊距 */
+.fade-in {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* 優化行程規劃區域 */
+#itinerarySection {
+    max-width: 100% !important;
+    width: 100%;
+}
+
+/* 優化景點選擇區域 */
+#destinationSection {
+    max-width: 100% !important;
+    width: 100%;
+}

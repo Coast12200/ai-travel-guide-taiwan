@@ -1,0 +1,360 @@
+/**
+ * Country Selection Enhanced Styles
+ * 優化的國家/地區選擇區塊樣式
+ */
+
+/* ==================== 標題區域 ==================== */
+.panel-header-enhanced {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.header-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.header-title-group h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-subtitle {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.header-actions .search-container {
+    flex: 1;
+}
+
+.header-actions .search-container input {
+    width: 100%;
+    height: 100%;
+}
+
+/* ==================== 國家標籤優化 ==================== */
+.country-tabs-enhanced {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.country-tab-enhanced {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--sky-blue);
+    background: white;
+    color: var(--sky-blue);
+    border-radius: 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.country-tab-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.country-tab-enhanced.active {
+    background: var(--sky-blue);
+    color: white;
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    transform: translateY(-2px);
+}
+
+.country-tab-enhanced .country-flag {
+    font-size: 1.2rem;
+}
+
+/* ==================== 地區卡片設計 ==================== */
+.region-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.region-card:hover {
+    border-color: var(--sky-blue);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.region-card.active {
+    border-color: var(--sky-blue);
+    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.15);
+}
+
+.region-card-header {
+    width: 100%;
+    padding: 1.25rem 1.5rem;
+    background: #f8f9fa;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-align: left;
+}
+
+.region-card-header:hover {
+    background: #e9ecef;
+}
+
+.region-card.active .region-card-header {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f5f5f5 100%);
+}
+
+.region-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.region-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.region-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.region-count {
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 0.25rem;
+}
+
+.region-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.expand-icon {
+    font-size: 0.9rem;
+    color: var(--muted);
+    transition: transform 0.3s ease;
+    display: inline-block;
+}
+
+.region-card.active .expand-icon {
+    transform: rotate(180deg);
+}
+
+.region-card-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: white;
+}
+
+.region-card.active .region-card-content {
+    max-height: 2000px;
+}
+
+/* 地區內容內部間距 */
+.region-card-content>* {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+/* ==================== 深色模式 ==================== */
+body.dark-mode .panel-header-enhanced h3 {
+    color: #f5f5f5;
+}
+
+body.dark-mode .header-subtitle {
+    color: #a8a8a8;
+}
+
+body.dark-mode .country-tab-enhanced {
+    background: #2b2b2b;
+    border-color: var(--sky-blue);
+    color: var(--sky-blue);
+}
+
+body.dark-mode .country-tab-enhanced:hover {
+    background: rgba(52, 152, 219, 0.15);
+}
+
+body.dark-mode .country-tab-enhanced.active {
+    background: var(--sky-blue);
+    color: white;
+}
+
+body.dark-mode .region-card {
+    background: #2b2b2b;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .region-card-header {
+    background: #333333;
+}
+
+body.dark-mode .region-card-header:hover {
+    background: #3a3a3a;
+}
+
+body.dark-mode .region-card.active .region-card-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
+body.dark-mode .region-card-content {
+    background: #2b2b2b;
+}
+
+body.dark-mode .region-name {
+    color: #f5f5f5;
+}
+
+body.dark-mode .region-count {
+    color: #a8a8a8;
+}
+
+body.dark-mode .expand-icon {
+    color: #a8a8a8;
+}
+
+/* ==================== 響應式設計 ==================== */
+@media (max-width: 768px) {
+    .panel-header-enhanced {
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .header-title-group h3 {
+        font-size: 1.3rem;
+    }
+
+    .header-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .header-actions .search-container {
+        width: 100%;
+    }
+
+    .country-tabs-enhanced {
+        gap: 0.5rem;
+    }
+
+    .country-tab-enhanced {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+    }
+
+    .region-card-header {
+        padding: 1rem 1.25rem;
+    }
+
+    .region-name {
+        font-size: 1rem;
+    }
+
+    .region-icon {
+        font-size: 1.1rem;
+    }
+
+    .region-card-content>* {
+        padding: 0 1.25rem 1.25rem 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-title-group h3 {
+        font-size: 1.2rem;
+    }
+
+    .country-tab-enhanced {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .region-card-header {
+        padding: 0.875rem 1rem;
+    }
+
+    .region-name {
+        font-size: 0.95rem;
+    }
+}
+
+/* ==================== 動畫效果 ==================== */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.region-card.active .region-card-content {
+    animation: slideDown 0.3s ease;
+}
+
+/* ==================== 無障礙優化 ==================== */
+.region-card-header:focus {
+    outline: 2px solid var(--sky-blue);
+    outline-offset: 2px;
+}
+
+.country-tab-enhanced:focus {
+    outline: 2px solid var(--sky-blue);
+    outline-offset: 2px;
+}
+
+/* ==================== 打印樣式 ==================== */
+@media print {
+    .region-card {
+        border: 1px solid #ddd;
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+
+    .region-card-content {
+        max-height: none !important;
+    }
+
+    .expand-icon {
+        display: none;
+    }
+}

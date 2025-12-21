@@ -1,0 +1,177 @@
+/* 行動裝置滾動修復 */
+
+/* 確保 body 和 html 可以正常滾動 */
+html {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    /* iOS 平滑滾動 */
+}
+
+body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    /* iOS 平滑滾動 */
+    position: relative;
+}
+
+/* 確保主容器可以滾動 */
+.container {
+    overflow-y: visible !important;
+    overflow-x: hidden;
+    min-height: auto !important;
+    height: auto !important;
+}
+
+/* 確保內容區域可以滾動 */
+.content-area {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+}
+
+/* 行動裝置特定修復 */
+@media (max-width: 768px) {
+
+    /* 確保 body 高度自適應內容 */
+    body {
+        min-height: 100vh;
+        height: auto !important;
+        overflow-y: scroll !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 確保容器不會限制高度 */
+    .container {
+        height: auto !important;
+        min-height: 100vh;
+        overflow: visible !important;
+    }
+
+    /* 確保所有面板都可見 */
+    .panel,
+    .description-panel {
+        position: relative !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    /* 地圖面板需要特殊處理 */
+    .map-panel {
+        position: relative !important;
+        height: auto !important;
+        overflow: visible !important;
+        min-height: 450px !important;
+    }
+
+    /* 地圖容器 - 關鍵修復 */
+    #map {
+        min-height: 450px !important;
+        height: 500px !important;
+        max-height: none !important;
+        width: 100% !important;
+        position: relative !important;
+        z-index: 1;
+        display: block !important;
+        overflow: hidden !important;
+        /* 地圖需要 hidden 才能正確顯示 */
+    }
+
+    /* 確保 Leaflet 地圖容器正確顯示 */
+    #map .leaflet-container {
+        height: 100% !important;
+        width: 100% !important;
+    }
+
+    /* 確保地圖圖層可見 */
+    #map .leaflet-pane,
+    #map .leaflet-map-pane {
+        z-index: auto !important;
+    }
+
+    /* 確保手風琴內容可見 */
+    .accordion-content {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    /* 確保內容區域不會被裁切 */
+    .content-area {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px;
+        overflow: visible !important;
+    }
+
+    /* 修復可能的固定定位問題 */
+    #contentArea {
+        position: relative !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    /* 確保景點故事集和地圖面板可見 */
+    #descriptionContent,
+    #aiPhotoSpotContent {
+        overflow: visible !important;
+        max-height: none !important;
+    }
+
+    /* 確保行程內容區域可見 */
+    #suggestionContent,
+    #suggestionContentWrapper {
+        overflow: visible !important;
+        max-height: none !important;
+    }
+}
+
+/* 小螢幕設備（手機） */
+@media (max-width: 480px) {
+
+    /* 地圖高度調整 */
+    #map {
+        min-height: 350px !important;
+        height: 400px !important;
+    }
+
+    /* 確保所有內容都可以滾動到 */
+    body {
+        padding-bottom: 50px;
+        /* 底部留白，確保可以滾動到最後 */
+    }
+}
+
+/* 修復 iOS Safari 的滾動問題 */
+@supports (-webkit-touch-callout: none) {
+    body {
+        /* iOS Safari */
+        -webkit-overflow-scrolling: touch !important;
+        overflow-y: scroll !important;
+    }
+
+    .container {
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
+
+/* 確保 Modal 不會影響主頁面滾動 */
+.modal.show {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 確保 Modal 打開時 body 仍可滾動（如果需要） */
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* 但在行動裝置上允許 body 滾動 */
+@media (max-width: 768px) {
+    body.modal-open {
+        position: relative;
+        overflow-y: auto;
+    }
+}

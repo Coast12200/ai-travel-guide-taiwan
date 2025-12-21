@@ -1,0 +1,286 @@
+/**
+ * smart-planner.css
+ * 智能旅行規劃器樣式 - 美化版
+ * 配合整體應用風格 (Blue/Neutral Theme)
+ */
+
+.smart-planner-container {
+    max-width: 2100px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Dark mode support */
+body.dark-mode .smart-planner-container {
+    background: linear-gradient(135deg, #2d3436 0%, #1a1d20 100%);
+    border-color: #444;
+}
+
+.smart-planner-header {
+    text-align: center;
+    color: var(--dark-text);
+    margin-bottom: 2rem;
+}
+
+.smart-planner-header h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-shadow: none;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.smart-planner-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    color: var(--text-muted);
+}
+
+.smart-planner-form {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--dark-text);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid var(--border-input);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background-color: var(--bg-input);
+    color: var(--dark-text);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(100, 151, 177, 0.15);
+    background-color: var(--bg-light);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.form-actions .btn {
+    flex: 1;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: #577a99;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--text-muted);
+    border: 1px solid var(--border-input);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #f8f9fa;
+    color: var(--dark-text);
+    border-color: var(--dark-text);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #95a5a6;
+    color: white;
+    border: none;
+}
+
+.progress-container {
+    background: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+}
+
+.progress-container.hidden {
+    display: none;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-skeleton);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    text-align: center;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.planner-content {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-light);
+}
+
+.plan-summary {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--border-light);
+}
+
+.plan-summary h3 {
+    margin-bottom: 1rem;
+    color: var(--dark-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.summary-item {
+    background: var(--bg-panel);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid var(--border-light);
+}
+
+.summary-item .label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.summary-item .value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.plan-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.plan-section {
+    padding: 1.5rem;
+    background: var(--bg-panel);
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+}
+
+.plan-section h4 {
+    margin-bottom: 1rem;
+    color: var(--dark-text);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.itinerary-content {
+    line-height: 1.8;
+    color: var(--dark-text);
+}
+
+.suggestions-list {
+    list-style: none;
+    padding: 0;
+}
+
+.suggestions-list li {
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: var(--bg-card);
+    border-left: 4px solid var(--warning-color);
+    border-radius: 4px;
+    box-shadow: var(--shadow-sm);
+    color: var(--dark-text);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .smart-planner-container {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+
+    .smart-planner-form {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+}

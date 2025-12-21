@@ -1,0 +1,3372 @@
+.souvenir-list strong {
+    color: var(--sky-blue);
+    font-weight: 600;
+}
+
+/* Day-mode (light) visual refinements for souvenir list */
+body:not(.dark-mode) .souvenir-list {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfffb 100%);
+    border: 1px solid rgba(34, 64, 84, 0.04);
+    box-shadow: 0 6px 18px rgba(24, 40, 56, 0.04);
+    padding: 18px;
+}
+
+body:not(.dark-mode) .souvenir-list h3 {
+    color: #1f5f2f;
+    /* slightly deeper green for better contrast */
+    background: rgba(225, 245, 235, 0.95);
+    /* very soft mint */
+    padding: 12px 14px 12px 48px;
+    /* leave space for icon */
+    border-radius: 10px;
+    position: relative;
+    border: 1px solid rgba(34, 64, 84, 0.04);
+    box-shadow: 0 2px 6px rgba(16, 24, 40, 0.04);
+}
+
+/* Decorative leaf marker before the souvenir title (light mode) */
+body:not(.dark-mode) .souvenir-list h3::before {
+    content: '🌿';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+body:not(.dark-mode) .souvenir-list p,
+body:not(.dark-mode) .souvenir-list ul li {
+    color: var(--dark-text);
+}
+
+body:not(.dark-mode) .souvenir-list ul li::before {
+    color: var(--sun-orange);
+}
+
+/* Price estimate styling appended by JS when numeric NT$ range is added */
+.souvenir-list .price-estimate {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-left: 6px;
+    font-weight: 600;
+}
+
+/* --- 評論摘要區塊 --- */
+.review-summary-block {
+    padding: 10px 0;
+    margin-bottom: 25px;
+}
+
+.review-summary-block blockquote {
+    border-left: 5px solid var(--sky-blue);
+    background-color: var(--bg-placeholder);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+.review-summary-block blockquote h3 {
+    color: var(--dark-text);
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.review-summary-block blockquote h3 strong {
+    color: var(--sun-orange);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.review-summary-block blockquote h4 {
+    color: var(--dark-text);
+    font-size: 1.1rem;
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.review-summary-block blockquote ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.review-summary-block blockquote ul li {
+    padding-left: 25px;
+    position: relative;
+    line-height: 1.6;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+.review-summary-block blockquote h4:nth-of-type(1)+ul li::before {
+    content: "✅";
+    position: absolute;
+    left: 0;
+    font-size: 0.9rem;
+    top: 0;
+}
+
+.review-summary-block blockquote h4:nth-of-type(2)+ul li::before {
+    content: "❌";
+    position: absolute;
+    left: 0;
+    font-size: 0.9rem;
+    top: 0;
+}
+
+.review-summary-block blockquote h4 strong {
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+/* TTS Play Button Styles */
+.tts-play-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--sky-blue);
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    margin: 0 8px;
+    flex-shrink: 0;
+}
+
+.tts-play-btn:hover {
+    background-color: var(--grass-green);
+    box-shadow: 0 4px 12px rgba(97, 150, 130, 0.3);
+    transform: scale(1.1);
+}
+
+.tts-play-btn.loading {
+    background-color: var(--sun-orange);
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.tts-play-btn.playing {
+    background-color: var(--grass-green);
+    box-shadow: 0 0 12px rgba(97, 150, 130, 0.6);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/*
+ * CSS 命名與架構指南
+ * - 我們建議採用 BEM-like 命名（component-block__element--modifier）或使用 Utility-First 的思維（小型、可重用的 .u-* 工具類）
+ * - 為了低風險逐步遷移，先新增 BEM-style 元件別名（.c- 前綴），並保留現有類名以維持相容性。
+ * - 小型工具類（.u-*）可用於快速佈局、間距與顯示控制，減少樣式重複與全域污染。
+ */
+
+/* --- Utility classes (lightweight helpers, prefix: u-) --- */
+.u-hidden {
+    display: none !important;
+}
+
+.u-flex {
+    display: flex !important;
+}
+
+.u-inline-flex {
+    display: inline-flex !important;
+}
+
+.u-center {
+    justify-content: center;
+    align-items: center;
+}
+
+.u-column {
+    flex-direction: column;
+}
+
+.u-gap-8 {
+    gap: 8px !important;
+}
+
+.u-gap-12 {
+    gap: 12px !important;
+}
+
+.u-mb-8 {
+    margin-bottom: 8px !important;
+}
+
+.u-mt-8 {
+    margin-top: 8px !important;
+}
+
+.u-p-8 {
+    padding: 8px !important;
+}
+
+.u-rounded {
+    border-radius: 8px !important;
+}
+
+.u-transition {
+    transition: all 0.2s ease !important;
+}
+
+.u-text-center {
+    text-align: center !important;
+}
+
+.u-flex-wrap {
+    flex-wrap: wrap !important;
+}
+
+.u-items-center {
+    align-items: center !important;
+}
+
+/* Planner options responsive grid */
+.planner-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    align-items: center;
+}
+
+/* Inline label helper used across planner controls */
+.label-inline {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+}
+
+/* AI feedback widget */
+.ai-feedback {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-top: 12px;
+}
+
+.ai-feedback .fb-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+.ai-feedback button.fb-btn {
+    border: 1px solid var(--border-color);
+    background: transparent;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.ai-feedback button.fb-btn:hover {
+    background: var(--bg-light);
+}
+
+.ai-feedback textarea.fb-comment {
+    flex: 1;
+    min-height: 56px;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-input);
+    resize: vertical;
+}
+
+.ai-feedback .fb-submit {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-left: auto;
+}
+
+.ai-feedback .fb-submit button {
+    padding: 6px 10px;
+}
+
+/* Advanced settings accordion tweaks */
+.advanced-settings-accordion .region-accordion-header {
+    background: var(--bg-light);
+    color: var(--dark-text);
+}
+
+.advanced-settings-accordion .region-accordion-content {
+    padding: 12px 16px;
+    background: var(--bg-panel);
+}
+
+/* Range slider basic styles */
+input[type="range"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, var(--sun-orange), var(--grass-green));
+    border-radius: 6px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* --- Sticky action bar for long pages (mobile-friendly) --- */
+.sticky-action-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    display: flex;
+    justify-content: center;
+    pointer-events: auto;
+    z-index: 2200;
+}
+
+.sticky-action-bar .sticky-inner {
+    display: inline-flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px;
+    border-radius: 999px;
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(6px);
+}
+
+body.dark-mode .sticky-action-bar .sticky-inner {
+    background: rgba(27, 27, 27, 0.95);
+}
+
+.sticky-action-bar .btn {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+}
+
+/* Hide on large screens where top controls are readily available */
+@media(min-width: 900px) {
+    .sticky-action-bar {
+        display: none;
+    }
+}
+
+/* --- 主要容器與標題 --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px;
+}
+
+.header h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 3rem;
+    color: var(--dark-text);
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.header p {
+    font-size: 1.1rem;
+    color: var(--light-text);
+}
+
+.header-controls {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.theme-toggle .btn {
+    background: var(--grass-green);
+    color: white;
+}
+
+/* --- 操作步驟導覽 --- */
+.steps-guide {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    padding: 15px 20px;
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.step {
+    color: var(--light-text);
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex: 1;
+    position: relative;
+}
+
+.step:not(:last-child)::after {
+    content: '→';
+    position: absolute;
+    right: -15px;
+    color: var(--sky-blue);
+}
+
+/* --- 通用面板樣式 --- */
+.panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: var(--shadow-sm);
+    opacity: 0;
+    /* --- 優化：平滑過渡動畫 --- */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.panel h3 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--dark-text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--sun-orange);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.panel-header h3 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.search-container {
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+
+/* --- 按鈕通用樣式 --- */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    /* --- 優化：統一微動態 --- */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #577a99;
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    background-color: var(--muted);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6b7d;
+    opacity: 0.9;
+}
+
+/* --- API 設定區 --- */
+.api-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.api-input-container {
+    flex: 1;
+    min-width: 280px;
+}
+
+.api-input {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-input);
+    border: 2px solid var(--border-input);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--dark-text);
+    transition: all 0.3s;
+}
+
+.api-input:focus {
+    outline: none;
+    border-color: var(--sun-orange);
+    background-color: var(--bg-light);
+}
+
+small {
+    color: var(--light-text);
+    font-size: 0.9rem;
+}
+
+small a {
+    color: var(--grass-green);
+    text-decoration: none;
+}
+
+.verify-btn {
+    background: var(--sky-blue);
+    color: white;
+}
+
+.verify-btn:hover {
+    background: #8abde4;
+}
+
+/* --- Component aliases (BEM-like helpers, prefix: c-) ---
+    These are intentionally empty alias classes to encourage usage of a
+    component-prefixed naming convention (e.g. `c-btn`, `c-panel`, `c-card`).
+    They do NOT duplicate rules here to avoid drift; you can apply both
+    the original class and the `c-` alias in HTML during migration, e.g.
+    <button class="btn c-btn c-btn--primary">...
+
+    If you use a CSS preprocessor (Sass/LESS), you may replace these with
+    proper mixins or @extend directives. Keeping them empty prevents
+    runtime/compile errors in plain CSS setups.
+*/
+.c-btn {
+    --c-alias: 1;
+}
+
+.c-btn--primary {
+    background: var(--grass-green);
+    color: white;
+}
+
+.c-btn--accent {
+    background: var(--sun-orange);
+    color: white;
+}
+
+.c-panel {
+    --c-alias: 1;
+}
+
+.c-panel__header {
+    --c-alias: 1;
+}
+
+.c-card {
+    --c-alias: 1;
+}
+
+.c-card__picture {
+    --c-alias: 1;
+}
+
+.c-card__content {
+    --c-alias: 1;
+}
+
+.api-status {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.status-success {
+    background: var(--status-success-bg);
+    color: var(--status-success-text);
+    border: 1px solid var(--status-success-border);
+}
+
+.status-error {
+    background: var(--status-error-bg);
+    color: var(--status-error-text);
+    border: 1px solid var(--status-error-border);
+}
+
+/* --- 優化：重試按鈕樣式 --- */
+.status-error .btn {
+    background: var(--sun-orange);
+    color: white;
+    margin-top: 10px;
+    padding: 8px 16px;
+}
+
+/* Onboarding modal specific styles */
+.modal-overlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--overlay-dark);
+    z-index: 3000;
+}
+
+.modal-overlay.hidden {
+    display: none !important;
+}
+
+.modal-content {
+    position: relative;
+    background: var(--bg-panel);
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 640px;
+    box-shadow: var(--shadow-md);
+}
+
+.modal-close-btn {
+    position: absolute;
+    right: 18px;
+    top: 12px;
+    background: transparent;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark-text);
+}
+
+.modal-close-btn:hover {
+    opacity: 0.7;
+}
+
+.onboard-step {
+    padding: 8px 0;
+}
+
+.onboard-step h4 {
+    margin: 6px 0;
+}
+
+.onboard-highlight {
+    outline: 3px solid rgba(255, 170, 50, 0.25);
+    border-radius: 8px;
+}
+
+/* Feedback and Contingency Modal Styles */
+.modal {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--overlay-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal .modal-content {
+    background: var(--bg-panel);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+}
+
+.modal .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 12px;
+}
+
+.modal .modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--dark-text);
+}
+
+.modal .modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal .modal-close:hover {
+    color: var(--dark-text);
+    opacity: 0.8;
+}
+
+.modal .modal-body {
+    color: var(--dark-text);
+    line-height: 1.6;
+}
+
+.modal .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+/* Feedback Modal Specific */
+.feedback-modal .modal-content {
+    max-width: 500px;
+}
+
+.feedback-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.feedback-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.feedback-options label:hover {
+    background: var(--hover-bg);
+}
+
+.feedback-options input[type="radio"] {
+    cursor: pointer;
+}
+
+.feedback-text {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    background: var(--bg-input);
+    color: var(--dark-text);
+    margin: 12px 0;
+}
+
+.feedback-text::placeholder {
+    color: var(--muted);
+}
+
+.feedback-text:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(100, 150, 200, 0.1);
+}
+
+/* Contingency Modal Specific */
+.contingency-modal .modal-content {
+    max-width: 600px;
+}
+
+.contingency-result {
+    padding: 12px 0;
+}
+
+.contingency-result h4 {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.contingency-result h5 {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.contingency-result ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 8px 0;
+}
+
+.contingency-result ul li {
+    padding-left: 24px;
+    position: relative;
+    margin: 6px 0;
+}
+
+.contingency-result ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.contingency-itinerary {
+    background: var(--bg-input);
+    padding: 12px;
+    border-radius: 6px;
+    margin: 8px 0;
+    border-left: 4px solid var(--warning-color);
+}
+
+.contingency-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* Button Styling */
+.btn-feedback {
+    background: var(--warning-color);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s ease;
+    margin-top: 16px;
+    width: 100%;
+}
+
+.btn-feedback:hover {
+    background: var(--warning-color-dark);
+    opacity: 0.9;
+}
+
+/* Diagnostics modal tweaks */
+#diagnosticsContent {
+    white-space: pre-wrap;
+    font-family: monospace;
+    background: var(--diagnostics-bg);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--diagnostics-border);
+    max-height: 320px;
+    overflow: auto;
+}
+
+.data-source-badge {
+    font-size: 12px;
+}
+
+
+/* --- 國家與景點卡片 --- */
+.country-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.country-tab {
+    padding: 10px 20px;
+    border: 2px solid var(--sky-blue);
+    background: transparent;
+    color: var(--sky-blue);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    /* --- 優化：統一微動態 --- */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.2s, color 0.2s;
+}
+
+.country-tab.active,
+.country-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    background: var(--sky-blue);
+    color: white;
+}
+
+.destinations {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* 新增：地區摺疊選單樣式 */
+.region-accordion-item {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.region-accordion-item.active {
+    box-shadow: var(--shadow-md);
+    border-color: var(--sky-blue);
+}
+
+.region-accordion-header {
+    width: 100%;
+    background: var(--bg-light);
+    padding: 15px 20px;
+    border: none;
+    text-align: left;
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: 'Noto Serif TC', serif;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--dark-text);
+    transition: background-color 0.3s;
+}
+
+.region-accordion-item.active .region-accordion-header {
+    background-color: var(--sky-blue);
+    color: white;
+}
+
+.region-accordion-header:hover {
+    background-color: #f8f9fa;
+}
+
+.region-accordion-item.active .region-accordion-header:hover {
+    background-color: #8abde4;
+}
+
+.accordion-icon {
+    font-size: 1.5rem;
+    font-weight: 300;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.card-actions button.edit-custom-btn {
+    color: var(--sky-blue);
+}
+
+.card-actions button.delete-custom-btn {
+    color: var(--sun-orange);
+}
+
+.destination-card .icon-container {
+    width: 50px;
+    height: 50px;
+    background: var(--card-icon-bg);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.destination-card .icon-container svg {
+    width: 28px;
+    height: 28px;
+}
+
+.destination-card h4 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    color: var(--dark-text);
+    position: relative;
+    padding-right: 25px;
+}
+
+.destination-card h4::after {
+    content: '▼';
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    transition: transform 0.3s ease-in-out;
+    font-size: 0.9rem;
+    color: var(--light-text);
+}
+
+.destination-card.expanded h4::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.destination-card p {}
+
+#suggestionContent p {
+    color: #283618;
+    text-align: center;
+}
+
+/* --- AI 行程規劃排版優化 (Timeline 樣式) --- */
+
+#suggestionContent {
+    /* 確保內容有相對定位，以便建立時間軸線 */
+    position: relative;
+    padding-left: 35px;
+    /* 為垂直線和點留出空間 */
+}
+
+/* 垂直時間軸線 */
+#suggestionContent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 15px;
+    /* 線條位置 */
+    width: 2px;
+    background-color: var(--border-color);
+    /* 使用邊界色 */
+}
+
+/* 時段/地點標題 (Markdown ### 轉換成的 <h3>) */
+#suggestionContent h3 {
+    position: relative;
+    margin-left: -20px;
+    /* 將 H3 內容向左移動，環繞時間軸點 */
+    padding: 8px 15px 8px 30px;
+    background-color: var(--sky-blue);
+    /* 用品牌色突出時間區塊 */
+    color: var(--dark-text);
+    border-radius: 8px;
+    margin-top: 30px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    /* 確保它在時間軸線上方 */
+}
+
+/* H3 事件節點 (Dot) */
+#suggestionContent h3::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    /* 將點定位在垂直線上 */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--sun-orange);
+    /* 鮮明的點顏色 */
+    border: 4px solid var(--bg-panel);
+    /* 邊框/外環，與背景色一致 */
+    box-shadow: 0 0 0 2px var(--sun-orange);
+    /* 增加一個外部光環 */
+    z-index: 20;
+}
+
+/* 活動清單 (Markdown - 轉換成的 <ul>/<li>) */
+#suggestionContent ul {
+    list-style-type: none;
+    /* 移除預設項目符號 */
+    padding-left: 20px;
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+
+#suggestionContent ul li {
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+    color: var(--dark-text);
+}
+
+#suggestionContent ul li:last-child {
+    border-bottom: none;
+}
+
+/* 為活動清單增加自訂項目符號 */
+#suggestionContent ul li::before {
+    content: '▶';
+    /* 使用右箭頭符號 */
+    color: var(--grass-green);
+    /* 使用另一個品牌色作為重點 */
+    font-weight: bold;
+    display: inline-block;
+    width: 1.2em;
+    margin-left: -1.2em;
+    font-size: 0.8em;
+    position: relative;
+    top: -1px;
+}
+
+/* Make descriptionContent use same visual style as suggestionContent */
+#descriptionContent {
+    margin-top: 20px;
+    background: linear-gradient(135deg, #fff1e6 0%, #e0eaff 100%);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+#descriptionContent p {
+    color: #283618;
+    text-align: left;
+}
+
+#transportContent {
+    margin-top: 15px;
+    background: linear-gradient(135deg, #e6f7ff 0%, #f0e6ff 100%);
+}
+
+#downloadPdfBtn {
+    background-color: var(--sun-orange);
+    color: white;
+    align-self: center;
+}
+
+
+/* --- 增強功能與行程規劃 --- */
+.enhanced-ai-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Left circular nav (shared desktop + mobile) */
+.left-circle-nav {
+    /* Moved to bottom-right so it sits above quick-jump buttons */
+    position: fixed;
+    right: 14px;
+    bottom: 150px;
+    /* Moved up from 110px */
+    left: auto;
+    top: auto;
+    transform: none;
+    z-index: 3100;
+    display: flex;
+    flex-direction: column-reverse;
+    /* Expand upwards so toggle stays in place */
+    align-items: center;
+    gap: 8px;
+}
+
+.left-circle-nav .circle-toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+}
+
+.left-circle-nav .circle-menu {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+    display: none;
+}
+
+.left-circle-nav .circle-menu[aria-hidden="false"],
+.left-circle-nav.open .circle-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.left-circle-nav .circle-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fff, #f0f6ff);
+    border: 1px solid var(--border-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.left-circle-nav .circle-item:focus {
+    outline: 2px solid var(--sky-blue);
+}
+
+/* Right quick jump buttons */
+.quick-jump-buttons {
+    position: fixed;
+    right: 12px;
+    bottom: 30px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.quick-jump {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    font-weight: 700;
+}
+
+/* Make quick-jump buttons slightly more visible by increasing opacity */
+.quick-jump {
+    opacity: 0.95;
+    transition: opacity 0.18s ease, transform 0.12s ease;
+}
+
+.quick-jump:hover {
+    opacity: 1;
+    transform: translateY(-4px);
+}
+
+/* Responsive: hide left nav on very narrow screens until toggle used */
+@media (max-width: 720px) {
+
+    /* Keep the circular nav accessible on small screens but nudge slightly inward */
+    .left-circle-nav {
+        right: 8px;
+        bottom: 160px;
+        left: auto;
+    }
+
+    .left-circle-nav .circle-menu {
+        display: none;
+    }
+}
+
+/* Slight dark-mode adjustments for the floating controls */
+body.dark-mode .left-circle-nav .circle-toggle,
+body.dark-mode .left-circle-nav .circle-item,
+body.dark-mode .quick-jump {
+    background: #2b2b2b;
+    color: #f5f5f5;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Improve contrast for Favorites modal in dark mode to avoid background conflicts */
+body.dark-mode #favoritesModal.modal-overlay {
+    background: rgba(0, 0, 0, 0.72);
+    /* slightly stronger overlay for contrast */
+    z-index: 3200;
+}
+
+body.dark-mode #favoritesModal .modal-content {
+    background: linear-gradient(180deg, #1f1f1f 0%, #232323 100%);
+    color: var(--light-text);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode #favoritesModal .modal-close-btn {
+    color: var(--muted);
+}
+
+/* Ensure list items inside favorites modal are readable in dark mode */
+body.dark-mode #favoritesModal #favoritesList,
+body.dark-mode #favoritesModal #favoritesList p {
+    color: var(--light-text);
+    background: transparent;
+}
+
+/* --- 攝影點 Markdown 容器 --- */
+.photo-spots-markdown-container {
+    padding: 16px;
+    margin-top: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+/* 每個攝影點的標題 (對應 Markdown 的 ## 或 ###) */
+.photo-spots-markdown-container h2,
+.photo-spots-markdown-container h3 {
+    font-size: 1.3em;
+    color: var(--grass-green);
+    margin: 25px 0 8px 0;
+    padding: 5px 0 5px 10px;
+    border-left: 4px solid var(--sun-orange);
+    font-weight: 700;
+}
+
+/* 首個標題減少上方邊距 */
+.photo-spots-markdown-container h2:first-child,
+.photo-spots-markdown-container h3:first-child {
+    margin-top: 0;
+}
+
+/* 攝影點清單 (對應 Markdown 的無序列表) */
+.photo-spots-markdown-container ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.photo-spots-markdown-container li {
+    padding-left: 28px;
+    position: relative;
+    line-height: 1.5;
+    font-size: 0.95em;
+    color: var(--dark-text);
+    font-weight: 400;
+}
+
+/* 清單項目的裝飾符號 */
+.photo-spots-markdown-container li::before {
+    content: '▪';
+    position: absolute;
+    left: 0;
+    color: var(--sky-blue);
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.photo-spots-markdown-container strong {
+    color: var(--grass-green);
+    font-weight: 600;
+}
+
+/* --- 伴手禮清單樣式 --- */
+.souvenir-list {
+    padding: 15px;
+    border-radius: 12px;
+    background-color: var(--bg-panel);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+}
+
+.souvenir-list h3 {
+    font-family: 'Open Sans', Arial, sans-serif;
+    color: var(--grass-green);
+    margin-top: 20px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed var(--border-color);
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.souvenir-list p {
+    color: var(--dark-text);
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.souvenir-list ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.souvenir-list ul li {
+    padding-left: 20px;
+    position: relative;
+    color: var(--light-text);
+}
+
+.souvenir-list ul li::before {
+    content: "🎁";
+    position: absolute;
+    left: 0;
+    color: var(--sun-orange);
+    font-size: 0.8rem;
+    top: 3px;
+}
+
+.souvenir-list strong {
+    color: var(--sky-blue);
+    font-weight: 600;
+}
+
+/* --- 在地美食清單排版樣式 --- */
+.food-spots-list {
+    padding: 15px;
+    border-radius: 12px;
+    background-color: var(--bg-card);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+}
+
+.food-spots-list h3 {
+    font-family: 'Noto Serif TC', serif;
+    color: var(--sun-orange);
+    margin-top: 20px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.food-spots-list p {
+    color: var(--dark-text);
+    line-height: 1.7;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.food-spots-list ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.food-spots-list ul li {
+    padding-left: 26px;
+    position: relative;
+    color: var(--light-text);
+}
+
+.food-spots-list ul li::before {
+    content: "📍";
+    position: absolute;
+    left: 0;
+    color: var(--sky-blue);
+    font-size: 0.9rem;
+    top: 1px;
+}
+
+.food-spots-list strong {
+    color: var(--grass-green);
+    font-weight: 600;
+}
+
+
+/* --- 景點故事集專屬樣式 --- */
+.story-container {
+    padding: 24px;
+    line-height: 1.8;
+    letter-spacing: 0.03em;
+    font-family: 'Noto Serif TC', Georgia, 'Times New Roman', serif;
+    color: var(--dark-text);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(250, 250, 250, 0.95));
+    border-radius: 10px;
+}
+
+.story-container h2 {
+    font-size: 1.4em;
+    color: var(--grass-green);
+    border-left: 5px solid var(--sun-orange);
+    padding-left: 12px;
+    margin: 28px 0 15px 0;
+    font-weight: 700;
+}
+
+.story-container p {
+    margin-bottom: 1.2em;
+    text-indent: 2em;
+}
+
+.story-container blockquote {
+    margin: 15px 0;
+    padding: 10px 20px;
+    border-left: 4px solid var(--sky-blue);
+    background-color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    color: var(--light-text);
+}
+
+.enhanced-btn {
+    padding: 10px;
+    background: #fff;
+    color: var(--grass-green);
+    border: 2px solid var(--grass-green);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    /* --- 優化：統一微動態 --- */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.enhanced-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    background: var(--grass-green);
+    color: white;
+}
+
+.suggestion-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.suggestion-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid;
+    border-radius: 10px;
+    background: transparent;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 140px;
+    font-weight: 600;
+    /* --- 優化：統一微動態 --- */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.2s, color 0.2s;
+}
+
+.suggestion-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.suggestion-btn.sunny {
+    border-color: var(--sun-orange);
+    color: var(--sun-orange);
+}
+
+.suggestion-btn.sunny:hover {
+    background: var(--sun-orange);
+    color: white;
+}
+
+.suggestion-btn.rainy {
+    border-color: var(--sky-blue);
+    color: var(--sky-blue);
+}
+
+.suggestion-btn.rainy:hover {
+    background: var(--sky-blue);
+    color: white;
+}
+
+.suggestion-btn.lucky {
+    border-color: #bc6c25;
+    color: #bc6c25;
+}
+
+.suggestion-btn.lucky:hover {
+    background: #bc6c25;
+    color: white;
+}
+
+#multiDayBtn,
+#aiEnhancedContent h3,
+#transportContent h3,
+.modal-content h3 {
+    font-family: 'Noto Serif TC', serif;
+    color: var(--dark-text);
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+}
+
+#suggestionContent ul,
+#aiEnhancedContent ul,
+#transportContent ul,
+#favoritesList ul {
+    list-style: none;
+    padding-left: 20px;
+    position: relative;
+}
+
+#suggestionContent ul::before,
+#aiEnhancedContent ul::before,
+#transportContent ul::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    background: var(--sky-blue);
+}
+
+#suggestionContent li,
+#aiEnhancedContent li,
+#transportContent li,
+#favoritesList li {
+    margin-bottom: 1em;
+    position: relative;
+    padding-left: 20px;
+}
+
+#suggestionContent li::before,
+#aiEnhancedContent li::before,
+#transportContent li::before {
+    content: '●';
+    color: var(--sun-orange);
+    position: absolute;
+    left: -5.5px;
+    top: 0;
+    font-size: 1.2rem;
+    background: var(--off-white);
+    transition: background-color 0.3s ease;
+}
+
+#suggestionContent strong,
+#aiEnhancedContent strong,
+#transportContent strong,
+#favoritesList strong {
+    color: var(--grass-green);
+}
+
+/* --- 收藏夾 Modal --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.modal-overlay:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.modal-overlay:not(.hidden) .modal-content {
+    transform: scale(1);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--light-text);
+}
+
+#favoritesList li {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#favoritesList li:hover {
+    background-color: var(--bg-input);
+}
+
+
+/* --- 收藏按鈕 --- */
+.favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    z-index: 10;
+    transition: all 0.2s;
+}
+
+.favorite-btn:hover {
+    background: var(--sun-orange);
+    color: white;
+}
+
+.favorite-btn.favorited {
+    background: var(--sun-orange);
+    color: white;
+    border-color: var(--sun-orange);
+}
+
+/* 更醒目的收藏按鈕（有陰影與微動態） */
+.favorite-btn.favorited {
+    box-shadow: 0 6px 18px rgba(255, 159, 28, 0.16);
+    transform: translateY(-1px);
+}
+
+/* 可鍵盤聚焦的卡片輪廓，增強可及性 */
+.destination-card:focus-within,
+.destination-card:focus {
+    outline: 3px solid rgba(59, 130, 246, 0.12);
+    box-shadow: 0 8px 24px rgba(14, 165, 233, 0.06);
+}
+
+
+/* --- 響應式設計 --- */
+@media (max-width: 992px) {
+    .content-area {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .content-area .panel {
+        margin-bottom: 0;
+    }
+
+    .content-area .panel h3 {
+        cursor: pointer;
+        border-bottom: 2px solid var(--sky-blue);
+        margin-bottom: 0;
+        padding-bottom: 15px;
+        position: relative;
+    }
+
+    .content-area .panel h3::after {
+        content: '▼';
+        position: absolute;
+        right: 10px;
+        transition: transform 0.3s ease;
+    }
+
+    .content-area .panel.active h3::after {
+        transform: rotate(180deg);
+    }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease-out, padding 0.3s ease-out;
+        padding: 0 10px;
+    }
+
+    .panel.active .accordion-content {
+        max-height: 2000px;
+        padding: 20px 10px 0;
+    }
+}
+
+/* Mobile quick navigation (bottom fixed) */
+.mobile-quick-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    gap: 8px;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+    box-shadow: 0 -6px 18px rgba(16, 24, 40, 0.08);
+    z-index: 2500;
+}
+
+body.dark-mode .mobile-quick-nav {
+    background: linear-gradient(180deg, rgba(27, 27, 27, 0.95), rgba(27, 27, 27, 0.9));
+}
+
+.mobile-quick-nav .mobile-quick-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-light);
+    font-weight: 700;
+    color: var(--dark-text);
+}
+
+.mobile-quick-nav .mobile-quick-btn.primary {
+    background: var(--grass-green);
+    color: white;
+    border-color: var(--grass-green);
+}
+
+/* Hide on desktop where the sticky action bar is present */
+@media(min-width: 900px) {
+    .mobile-quick-nav {
+        display: none;
+    }
+}
+
+/* Temporary highlight for quick-nav target focus */
+.quick-nav-highlight {
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12) inset, 0 8px 30px rgba(34, 197, 94, 0.06);
+    transition: box-shadow 0.4s ease;
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2.5rem;
+    }
+
+    .api-input-group {
+        flex-direction: column;
+    }
+
+    .steps-guide {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .step:not(:last-child)::after {
+        content: '↓';
+        right: auto;
+        left: 5px;
+        top: 20px;
+    }
+
+    .panel-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* --- 語言按鈕與資料來源徽章 --- */
+#langToggleBtn {
+    min-width: 48px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--off-white);
+    border: 1px solid var(--border-color);
+}
+
+.data-source-badge {
+    position: absolute;
+    right: 18px;
+    top: 12px;
+    background: var(--sun-orange);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    z-index: 5;
+    box-shadow: var(--shadow-sm);
+}
+
+.status-info {
+    background: linear-gradient(90deg, #fff8e6 0%, #f0f7ff 100%);
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    color: var(--dark-text);
+}
+
+/* 調整 header 的 always-offline checkbox 文字樣式 */
+#alwaysOfflineToggle {
+    width: 18px;
+    height: 18px;
+}
+
+/* Button busy / loading visuals */
+.btn[aria-busy="true"] {
+    opacity: 0.85;
+    cursor: wait;
+    position: relative;
+    pointer-events: none;
+}
+
+.btn[aria-busy="true"]::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border: 2px solid var(--spinner-light);
+    border-top-color: var(--spinner-light-full);
+    border-radius: 50%;
+    box-shadow: none;
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Make disabled buttons slightly dimmer */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Always-offline checkbox visual tweak */
+label[style] input[type="checkbox"] {
+    accent-color: var(--sun-orange);
+    width: 18px;
+    height: 18px;
+}
+
+/* Toast notifications */
+#toastContainer .toast {
+    background: var(--overlay-heavy);
+    color: var(--text-white);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 8px;
+    min-width: 200px;
+    max-width: 400px;
+    box-shadow: var(--shadow-md);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+#toastContainer .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Toast types */
+#toastContainer .toast-success {
+    background-color: #27a639;
+    border-left: 4px solid #1fa030;
+}
+
+#toastContainer .toast-error {
+    background-color: #c41e3a;
+    border-left: 4px solid #9d1728;
+}
+
+#toastContainer .toast-info {
+    background-color: #6497b1;
+    border-left: 4px solid #5079a0;
+}
+
+#toastContainer .toast-warning {
+    background-color: #fca311;
+    color: #1b1b1b;
+    border-left: 4px solid #e08f0a;
+}
+
+#toastContainer .toast-loading {
+    background-color: #5f7f9a;
+    border-left: 4px solid #4a6480;
+}
+
+/* Favorite button micro animation */
+.favorite-btn.animate {
+    animation: pop 0.35s ease;
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.25);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* --- 交通建議結構化排版 --- */
+.transport-step-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.transport-segment {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode .transport-segment {
+    background-color: #353535;
+    border-color: #555;
+}
+
+.transport-segment h4 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: var(--dark-text);
+    font-family: 'Noto Serif TC', serif;
+}
+
+.transport-details-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+}
+
+.transport-details-list li {
+    padding-left: 28px;
+    position: relative;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--light-text);
+}
+
+.transport-details-list li::before {
+    content: attr(data-icon);
+    position: absolute;
+    left: 0;
+    font-size: 1.1em;
+}
+
+.transport-segment .transport-tip {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background-color: rgba(255, 163, 0, 0.1);
+    border-left: 4px solid var(--sun-orange);
+    border-radius: 4px;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--light-text);
+}
+
+/* --- 列印優化：Print CSS (@media print) --- */
+@media print {
+
+    /* 隱藏導航與控制元素 */
+    .header,
+    .header-controls,
+    .steps-guide,
+    nav,
+    .sticky-action-bar,
+    #countryTabs,
+    #destinations,
+    .destinations,
+    .country-tabs,
+    .search-container,
+    #destinationSearch,
+    #favoritesToggleBtn,
+    #themeToggleBtn,
+    #langToggleBtn,
+    #alwaysOfflineToggle,
+    #alwaysOfflineLabel,
+    [id*="Btn"],
+    .btn,
+    .modal-overlay,
+    .toastContainer,
+    #toastContainer,
+    #loading-skeleton {
+        display: none !important;
+    }
+
+    /* 隱藏 API 設定相關區域 */
+    .api-input-group,
+    .api-input-container,
+    .api-input,
+    .verify-btn,
+    #geminiApiKey,
+    #cwaApiKey,
+    #tdxApiKey,
+    [id*="ApiKey"],
+    [id*="verifyBtn"],
+    [class*="api-status"],
+    .api-status {
+        display: none !important;
+    }
+
+    /* 隱藏地圖版權資訊和互動元素 */
+    #map,
+    .leaflet-control,
+    .leaflet-control-attribution,
+    .leaflet-control-zoom,
+    .leaflet-control-container,
+    .mapboxgl-ctrl,
+    .mapboxgl-ctrl-logo,
+    .mapboxgl-ctrl-attrib {
+        display: none !important;
+    }
+
+    /* 隱藏地圖容器但保留內容區域 */
+    .content-area {
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+    }
+
+    /* 頁面基礎樣式 */
+    body {
+        background: white;
+        color: #000;
+        font-size: 12pt;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0;
+        padding: 20mm;
+        background: white;
+    }
+
+    /* 移除不必要的元素 */
+    .section,
+    [class*="enhancement"],
+    [id*="Enhancement"],
+    #imageGallery,
+    .gallery,
+    .image-carousel {
+        page-break-inside: avoid;
+    }
+
+    /* 標題樣式 */
+    h1 {
+        font-size: 24pt;
+        margin: 0 0 12pt 0;
+        page-break-after: avoid;
+        border-bottom: 3px solid #606c38;
+        padding-bottom: 8pt;
+    }
+
+    h2 {
+        font-size: 18pt;
+        margin: 16pt 0 8pt 0;
+        page-break-after: avoid;
+        border-bottom: 2px solid #fca311;
+        padding-bottom: 6pt;
+    }
+
+    h3 {
+        font-size: 14pt;
+        margin: 12pt 0 6pt 0;
+        page-break-after: avoid;
+    }
+
+    h4 {
+        font-size: 12pt;
+        margin: 10pt 0 4pt 0;
+        font-weight: 600;
+    }
+
+    /* 段落與清單 */
+    p {
+        margin: 6pt 0;
+        orphans: 2;
+        widows: 2;
+    }
+
+    ul,
+    ol {
+        margin: 8pt 0;
+        padding-left: 20pt;
+    }
+
+    li {
+        margin: 4pt 0;
+        page-break-inside: avoid;
+    }
+
+    /* 行程內容最佳化 */
+    #suggestionContent,
+    #aiEnhancedContent,
+    #aiPhotoSpotContent,
+    #transportContent,
+    #transportSuggestionContainer {
+        background: white !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 12pt 0 !important;
+        page-break-inside: avoid;
+    }
+
+    /* 交通建議段落最佳化 */
+    .transport-segment {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        margin-bottom: 12pt;
+        padding: 10pt;
+    }
+
+    .transport-segment h4 {
+        margin: 0 0 6pt 0;
+        font-size: 12pt;
+    }
+
+    .transport-details-list li {
+        padding-left: 24pt;
+        margin: 3pt 0;
+        font-size: 11pt;
+    }
+
+    .transport-tip {
+        background: #f5f5f5 !important;
+        border-left: 3px solid #fca311 !important;
+        padding: 8pt 10pt !important;
+        margin-top: 8pt;
+        font-style: italic;
+        font-size: 11pt;
+    }
+
+    /* 天氣資訊與實時狀態 */
+    .weather-info {
+        background: transparent !important;
+        border-radius: 0;
+        padding: 4pt 0;
+        margin: 4pt 0;
+        font-size: 11pt;
+    }
+
+    .realtime-status {
+        font-size: 10pt;
+        color: #666;
+        margin: 4pt 0;
+    }
+
+    /* AI 泡泡與內容框 */
+    .ai-bubble,
+    .ai-reply-box,
+    .suggestion-box,
+    [class*="ai-"],
+    [class*="suggestion-"] {
+        background: white !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        padding: 10pt;
+        margin: 10pt 0;
+    }
+
+    /* 摺疊選單與面板 */
+    .region-accordion-item,
+    .panel {
+        background: white !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        margin-bottom: 12pt;
+    }
+
+    .region-accordion-header,
+    .region-accordion-content {
+        background: white !important;
+    }
+
+    .region-accordion-header {
+        font-weight: 600;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 4pt;
+    }
+
+    .region-accordion-content {
+        display: block !important;
+        max-height: none !important;
+        padding: 10pt 0;
+    }
+
+    .accordion-icon {
+        display: none;
+    }
+
+    /* 卡片與圖像 */
+    .destination-card {
+        background: white;
+        border: 1px solid #ddd;
+        box-shadow: none;
+        page-break-inside: avoid;
+        margin-bottom: 10pt;
+    }
+
+    .card-picture {
+        max-width: 200px;
+        height: auto;
+        margin-bottom: 8pt;
+    }
+
+    .card-icon-fallback {
+        display: none;
+    }
+
+    /* 移除表格陰影和過多的視覺效果 */
+    table {
+        border-collapse: collapse;
+        page-break-inside: avoid;
+        margin: 10pt 0;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #999;
+    }
+
+    th {
+        background: #f5f5f5;
+        font-weight: bold;
+        padding: 6pt;
+    }
+
+    td {
+        padding: 6pt;
+    }
+
+    /* 圖表與媒體 */
+    img {
+        max-width: 100%;
+        height: auto;
+        page-break-inside: avoid;
+    }
+
+    /* 連結不顯示下劃線 */
+    a {
+        color: #000;
+        text-decoration: none;
+    }
+
+    /* 程式碼區塊 */
+    pre,
+    code {
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 8pt;
+        font-family: 'Courier New', monospace;
+        font-size: 11pt;
+        overflow-x: auto;
+        page-break-inside: avoid;
+    }
+
+    /* 分頁設定 */
+    .page-break {
+        page-break-before: always;
+    }
+
+    .no-page-break {
+        page-break-inside: avoid;
+    }
+
+    /* 移除顏色背景以減少墨量 */
+    .status-success,
+    .status-error,
+    .status-warning,
+    .status-info,
+    .alert,
+    .notification {
+        background: white !important;
+        border: 1px solid #999 !important;
+        color: #000 !important;
+    }
+
+    /* 移除漸層與視覺效果 */
+    * {
+        background-image: none !important;
+        text-shadow: none !important;
+        box-shadow: none !important;
+    }
+
+    /* 確保文字清晰 */
+    body,
+    body * {
+        color: #000 !important;
+    }
+
+    /* 優化列印時的邊距 */
+    @page {
+        margin: 20mm;
+        size: A4 portrait;
+    }
+
+    @page :first {
+        margin-top: 20mm;
+    }
+
+    /* 顯示行程選擇資訊 */
+    #itineraryPrefs,
+    #tripDaysInput,
+    #budgetLevelSelect,
+    #routeModeSelect {
+        display: block;
+        margin: 10pt 0;
+        padding: 6pt;
+        border: 1px solid #ddd;
+    }
+
+    /* 最後調整：確保可讀性 */
+    small {
+        font-size: 9pt;
+    }
+
+    .muted,
+    [class*="muted"] {
+        color: #666 !important;
+    }
+}
+
+/* Card source badge (offline / live) */
+.destination-card .source-badge {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background: var(--overlay-medium);
+    color: var(--text-white);
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    z-index: 12;
+}
+
+.destination-card .source-badge.offline {
+    background: var(--sun-orange);
+}
+
+.destination-card .source-badge.live {
+    background: var(--grass-green);
+}
+
+/* Cost Estimation Visualization */
+.cost-estimate-container {
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+}
+
+.cost-summary {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
+    border-left: 4px solid var(--sky-blue);
+    border-radius: 6px;
+}
+
+.cost-summary h4 {
+    margin: 0 0 12px 0;
+    color: var(--dark-text);
+    font-size: 1.1rem;
+}
+
+.cost-totals {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.cost-total-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cost-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+.cost-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--sky-blue);
+}
+
+.cost-confidence {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin: 0;
+}
+
+/* Cost Breakdown Section */
+.cost-breakdown {
+    margin-bottom: 24px;
+}
+
+.cost-breakdown h5 {
+    margin: 0 0 12px 0;
+    color: var(--dark-text);
+    font-size: 1rem;
+}
+
+.cost-chart-container {
+    background: var(--bg-light);
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.cost-breakdown-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cost-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cost-bar-label {
+    min-width: 70px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--dark-text);
+    text-align: right;
+}
+
+.cost-bar-visual {
+    flex: 1;
+    height: 28px;
+    background: var(--bg-input);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.cost-bar-fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.3s ease;
+    min-width: 30px;
+}
+
+.cost-bar-percent {
+    font-size: 0.75rem;
+    color: white;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.cost-bar-value {
+    min-width: 110px;
+    font-weight: 600;
+    color: var(--sky-blue);
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+/* Cost Breakdown Table */
+.cost-breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+.cost-breakdown-table thead {
+    background: var(--bg-input);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.cost-breakdown-table th {
+    padding: 10px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.cost-breakdown-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--light-text);
+}
+
+.cost-breakdown-table tbody tr:hover {
+    background: var(--bg-input);
+}
+
+/* Cost Assumptions */
+.cost-assumptions {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(52, 152, 219, 0.08);
+    border-left: 3px solid var(--sky-blue);
+    border-radius: 4px;
+}
+
+.cost-assumptions h5 {
+    margin: 0 0 8px 0;
+    color: var(--dark-text);
+}
+
+/* Cost Adjustment Controls */
+.cost-adjustment {
+    margin-bottom: 16px;
+}
+
+.cost-adjustment h5 {
+    margin: 0 0 10px 0;
+    color: var(--dark-text);
+}
+
+.adjustment-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    background: var(--sky-blue);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-small:hover {
+    background: var(--grass-green);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Currency Display */
+.currency-display {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--bg-input);
+    border-radius: 6px;
+}
+
+.currency-display h5 {
+    margin: 0 0 10px 0;
+    color: var(--dark-text);
+}
+
+.currency-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font-size: 0.9rem;
+}
+
+.currency-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-light);
+    align-items: center;
+}
+
+.currency-row.header {
+    font-weight: 600;
+    color: var(--dark-text);
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 4px;
+}
+
+.currency-code {
+    font-weight: 600;
+    color: var(--sky-blue);
+}
+
+/* Dark mode adjustments */
+body.dark-mode .cost-estimate-container {
+    background: #2b2b2b;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .cost-summary {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(46, 204, 113, 0.15));
+    border-left-color: var(--sky-blue);
+}
+
+body.dark-mode .cost-chart-container {
+    background: #1b1b1b;
+}
+
+body.dark-mode .cost-bar-visual {
+    background: #333333;
+}
+
+body.dark-mode .cost-breakdown-table thead {
+    background: #333333;
+}
+
+/* TDX Tab Container */
+.tab-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--border-light);
+}
+
+.tab-btn {
+    padding: 10px 18px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--light-text);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.cost-bar-visual {
+    flex: 1;
+    height: 28px;
+    background: var(--bg-input);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.cost-bar-fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.3s ease;
+    min-width: 30px;
+}
+
+.cost-bar-percent {
+    font-size: 0.75rem;
+    color: white;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.cost-bar-value {
+    min-width: 110px;
+    font-weight: 600;
+    color: var(--sky-blue);
+    text-align: right;
+    font-size: 0.95rem;
+}
+
+/* Cost Breakdown Table */
+.cost-breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+}
+
+.cost-breakdown-table thead {
+    background: var(--bg-input);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.cost-breakdown-table th {
+    padding: 10px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.cost-breakdown-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--light-text);
+}
+
+.cost-breakdown-table tbody tr:hover {
+    background: var(--bg-input);
+}
+
+/* Cost Assumptions */
+.cost-assumptions {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(52, 152, 219, 0.08);
+    border-left: 3px solid var(--sky-blue);
+    border-radius: 4px;
+}
+
+.cost-assumptions h5 {
+    margin: 0 0 8px 0;
+    color: var(--dark-text);
+}
+
+/* Cost Adjustment Controls */
+.cost-adjustment {
+    margin-bottom: 16px;
+}
+
+.cost-adjustment h5 {
+    margin: 0 0 10px 0;
+    color: var(--dark-text);
+}
+
+.adjustment-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    background: var(--sky-blue);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-small:hover {
+    background: var(--grass-green);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Currency Display */
+.currency-display {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--bg-input);
+    border-radius: 6px;
+}
+
+.currency-display h5 {
+    margin: 0 0 10px 0;
+    color: var(--dark-text);
+}
+
+.currency-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font-size: 0.9rem;
+}
+
+.currency-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-light);
+    align-items: center;
+}
+
+.currency-row.header {
+    font-weight: 600;
+    color: var(--dark-text);
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 4px;
+}
+
+.currency-code {
+    font-weight: 600;
+    color: var(--sky-blue);
+}
+
+/* Dark mode adjustments */
+body.dark-mode .cost-estimate-container {
+    background: #2b2b2b;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .cost-summary {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(46, 204, 113, 0.15));
+    border-left-color: var(--sky-blue);
+}
+
+body.dark-mode .cost-chart-container {
+    background: #1b1b1b;
+}
+
+body.dark-mode .cost-bar-visual {
+    background: #333333;
+}
+
+body.dark-mode .cost-breakdown-table thead {
+    background: #333333;
+}
+
+/* TDX Tab Container */
+.tab-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--border-light);
+}
+
+.tab-btn {
+    padding: 10px 18px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--light-text);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.tab-btn:hover {
+    color: var(--dark-text);
+    border-bottom-color: var(--sky-blue);
+}
+
+.tab-btn.active {
+    color: var(--dark-text);
+    border-bottom-color: var(--sky-blue);
+    background: rgba(52, 152, 219, 0.08);
+}
+
+/* TDX Tab Content */
+.tdx-tab-content {
+    animation: fadeIn 0.3s ease;
+}
+
+body.dark-mode .tab-btn.active {
+    background: rgba(52, 152, 219, 0.15);
+}
+
+/* Dark mode bottom sheet styles */
+body.dark-mode .download-backdrop {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .download-bottom-sheet {
+    background: #2a2a2a;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .bottom-sheet-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .download-option {
+    color: #e8e8e8;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+color: var(--light-text);
+}
+
+.cost-breakdown-table tbody tr:hover {
+    background: var(--bg-input);
+}
+
+/* Cost Assumptions */
+.cost-assumptions {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(52, 152, 219, 0.08);
+    border-left: 3px solid var(--sky-blue);
+    border-radius: 4px;
+}
+
+.cost-assumptions h5 {
+    margin: 0 0 8px 0;
+    color: var(--dark-text);
+}
+
+/* Cost Adjustment Controls */
+.cost-adjustment {
+    margin-bottom: 16px;
+}
+
+.cost-adjustment h5 {
+    margin: 0 0 10px 0;
+    color: var(--dark-text);
+}
+
+.adjustment-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    background: var(--sky-blue);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-small:hover {
+    background: var(--grass-green);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Currency Display */
+.currency-display {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--bg-input);
+    border-radius: 6px;
+}
+
+.currency-display h5 {
+    margin: 0 0 10px 0;
+    color: var(--dark-text);
+}
+
+.currency-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    font-size: 0.9rem;
+}
+
+.currency-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-light);
+    align-items: center;
+}
+
+.currency-row.header {
+    font-weight: 600;
+    color: var(--dark-text);
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 4px;
+}
+
+.currency-code {
+    font-weight: 600;
+    color: var(--sky-blue);
+}
+
+/* Dark mode adjustments */
+body.dark-mode .cost-estimate-container {
+    background: #2b2b2b;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .cost-summary {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(46, 204, 113, 0.15));
+    border-left-color: var(--sky-blue);
+}
+
+body.dark-mode .cost-chart-container {
+    background: #1b1b1b;
+}
+
+body.dark-mode .cost-bar-visual {
+    background: #333333;
+}
+
+body.dark-mode .cost-breakdown-table thead {
+    background: #333333;
+}
+
+/* TDX Tab Container */
+.tab-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    border-bottom: 2px solid var(--border-light);
+}
+
+.tab-btn {
+    padding: 10px 18px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--light-text);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.tab-btn:hover {
+    color: var(--dark-text);
+    border-bottom-color: var(--sky-blue);
+}
+
+.tab-btn.active {
+    color: var(--dark-text);
+    border-bottom-color: var(--sky-blue);
+    background: rgba(52, 152, 219, 0.08);
+}
+
+/* TDX Tab Content */
+.tdx-tab-content {
+    animation: fadeIn 0.3s ease;
+}
+
+body.dark-mode .tab-btn.active {
+    background: rgba(52, 152, 219, 0.15);
+}
+
+/* Dark mode bottom sheet styles */
+body.dark-mode .download-backdrop {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .download-bottom-sheet {
+    background: #2a2a2a;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .bottom-sheet-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .download-option {
+    color: #e8e8e8;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .download-option:hover {
+    background-color: #3a3a3a;
+}
+
+body.dark-mode .download-option:active {
+    background-color: #4a4a4a;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Restored missing styles */
+.region-accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+    background-color: var(--bg-placeholder);
+}
+
+.destinations-grid {
+    padding: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.destination-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s, box-shadow 0.3s, opacity 0.3s, background-color 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    /* 確保圖片圓角 */
+}
+
+.destination-card.hidden {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+.destination-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.12), 0 2px 6px rgba(16, 24, 40, 0.06);
+}
+
+/* 強化已選中卡片樣式，便於在長列表中定位 */
+.destination-card.selected {
+    border-color: var(--grass-green);
+    box-shadow: 0 14px 40px rgba(34, 197, 94, 0.12), 0 4px 10px rgba(34, 197, 94, 0.06);
+    filter: brightness(1.1);
+}
+
+/* 當卡片被收藏時，增加一個明顯的左側色條與更深色的陰影 */
+.destination-card .favorite-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(180deg, #ffd27f, #ff9f1c);
+    border-radius: 6px 0 0 6px;
+}
+
+/* 景點卡片圖片 */
+.card-picture {
+    width: 100%;
+    height: 280px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 12px 12px 0 0;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* 懸停效果 */
+.card-picture:hover {
+    transform: scale(1.02);
+    filter: brightness(1.1);
+}
+
+/* 載入動畫 */
+.card-picture {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.card-icon-fallback {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-input);
+    transition: background-color 0.3s;
+}
+
+.card-icon-fallback svg {
+    width: 40px;
+    height: 40px;
+    color: var(--light-text);
+}
+
+.card-content-wrapper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    /* 讓內容填滿剩餘空間 */
+}
+
+.card-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+.card-actions button {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
